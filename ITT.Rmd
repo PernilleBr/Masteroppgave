@@ -1,0 +1,65 @@
+---
+title: "ITT"
+author: "Pernille Breili"
+date: "2023-03-01"
+output: html_document
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(lme4); library(emmeans); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# ordner et datasett som skal brukes til ANCOVA for visceralt fett
+itt.vat.lm <- Resultatskjema %>%
+  select(id, group, time, vat_mass) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post")),
+         group = factor(group, levels = c("fls", "kon"))) %>%
+  pivot_wider(names_from = time,
+              values_from = vat_mass) %>%
+  drop_na() %>%
+  mutate(change = post - pre) %>%
+  group_by(group) %>%
+  print()
+
+# ANCOVA for visceralt fett
+itt.vat.lm1 <- lm(change ~ pre + group, data = itt.vat.lm)
+plot(itt.vat.lm1)
+summary(itt.vat.lm1)
+confint(itt.vat.lm1)
+
+tidy(itt.vat.lm1) %>%
+  print()
+
+itt.vat.lm2 <- lm(post ~ pre + group, data = itt.vat.lm)
+plot(itt.vat.lm2)
+summary(itt.vat.lm2)
+confint(itt.vat.lm2)
+
+# lmer
+itt.vat.lmer <- Resultatskjema %>%
+  select(id, group, time, vat_mass) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post")),
+         group = factor(group, levels = c("fls", "kon"))) %>%
+  print()
+
+vat.lmer <- lmer(vat_mass ~ time * group + (1|id), data = itt.vat.lmer)
+summary(vat.lmer)
+plot(vat.lmer)
+confint(vat.lmer)
+
+# ordner et datasett for å lage grafer - gjennomsnittlig score og sd
+itt.vat.msd <- Resultatskjema %>%
+  select(id, group, time, vat_mass) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post")),
+         group = factor(group, levels = c("fls", "kon"))) %>%
+  pivot_wider(names_from = time,
+              values_from = vat_mass) %>%
+  drop_na() %>%
+  mutate(change = ((post - pre) / pre) * 100 ) %>%
+  group_by(group) %>%
+  print()
+```
+
