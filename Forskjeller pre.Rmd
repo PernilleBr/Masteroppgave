@@ -1,0 +1,150 @@
+---
+title: "Forskjeller pre"
+author: "Pernille Breili"
+date: "2023-03-03"
+output: html_document
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+pre.diff <- Resultatskjema %>%
+  # velger relevante variabler
+  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv) %>% 
+  # filtrerer verdier fra pretest
+  filter(time == "pre") %>%
+  # grupperer etter gruppe og kjønn
+  group_by(group) %>%
+  # lager en ny variabler som teller antall i grupperte variabler
+  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
+  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
+  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
+  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(vat_volume = as.numeric(vat_volume, na.rm = TRUE)) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  drop_na() %>%
+  print()
+
+ggplot(pre.diff, aes(sample = age)) + stat_qq() + stat_qq_line(col = "red")
+lm.age <- lm(age ~ group, data = pre.diff)
+summary(lm.age)
+
+ggplot(pre.diff, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
+lm.height <- lm(height ~ group, data = pre.diff)
+summary(lm.height)
+
+ggplot(pre.diff, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.mass <- lm(lean_mass ~ group, data = pre.diff)
+summary(lm.mass)
+
+# bmi er signifikant forskjellig mellom gruppene
+ggplot(pre.diff, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
+lm.bmi <- lm(bmi ~ group, data = pre.diff)
+summary(lm.bmi)
+
+# fettmasse er signifikant forskjellig mellom gruppene
+ggplot(pre.diff, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.fat <- lm(fat_mass ~ group, data = pre.diff)
+summary(lm.fat)
+
+ggplot(pre.diff, aes(sample = lean_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.lean <- lm(lean_mass ~ group, data = pre.diff)
+summary(lm.lean)
+
+ggplot(pre.diff, aes(sample = sys)) + stat_qq() + stat_qq_line(col = "red")
+lm.sys <- lm(sys ~ group, data = pre.diff)
+summary(lm.sys)
+
+ggplot(pre.diff, aes(sample = dia)) + stat_qq() + stat_qq_line(col = "red")
+lm.dia <- lm(dia ~ group, data = pre.diff)
+summary(lm.dia)
+
+ggplot(pre.diff, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
+lm.wc <- lm(wc ~ group, data = pre.diff)
+summary(lm.wc)
+
+ggplot(pre.diff, aes(sample = handgrip)) + stat_qq() + stat_qq_line(col = "red")
+lm.hg <- lm(handgrip ~ group, data = pre.diff)
+summary(lm.hg)
+
+ggplot(pre.diff, aes(sample = vo2max_ml_min_kg)) + stat_qq() + stat_qq_line(col = "red")
+lm.vo2 <- lm(vo2max_ml_min_kg ~ group, data = pre.diff)
+summary(lm.vo2)
+
+ggplot(pre.diff, aes(sample = vat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.vat <- lm(vat_mass ~ group, data = pre.diff)
+summary(lm.vat)
+
+ggplot(pre.diff, aes(sample = vat_volume)) + stat_qq() + stat_qq_line(col = "red")
+lm.vatv <- lm(vat_volume ~ group, data = pre.diff)
+summary(lm.vatv)
+
+# fjerner fp som hadde 10 i glukose 
+gluk <- pre.diff %>%
+  filter(id != "tr031 10541") %>%
+  print()
+
+# sjekker forskjeller både med og uten fp med ekstremverdi  
+ggplot(gluk, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
+lm.gluk <- lm(`s-glukose` ~ group, data = gluk)
+summary(lm.gluk)
+
+ggplot(pre.diff, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
+lm.gluk.med <- lm(`s-glukose` ~ group, data = pre.diff)
+summary(lm.gluk.med)
+
+ggplot(pre.diff, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
+lm.trigl <- lm(`s-triglyserider` ~ group, data = pre.diff)
+summary(lm.trigl)
+
+# fjerner 3xfp med ekstreme verdier i triglyserider
+trigl <- pre.diff %>%
+  filter(id != "tr031 11159") %>%
+  filter(id != "tr031 14662") %>%
+  filter(id != "tr031 11887") %>%
+  print()
+
+# sjekker forskjeller uten 3xfp
+ggplot(trigl, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
+lm.trigl.uten <- lm(`s-triglyserider` ~ group, data = trigl)
+summary(lm.trigl.uten)
+
+ggplot(pre.diff, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.hdl <- lm(`s-hdl` ~ group, data = pre.diff)
+summary(lm.hdl)
+
+# fjerner fp med ekstreme verdier i hdl
+hdl <- pre.diff %>%
+  filter(id != "tr031 005") %>%
+  print()
+
+ggplot(hdl, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.hdl.uten <- lm(`s-hdl` ~ group, data = hdl)
+summary(lm.hdl.uten)
+
+ggplot(pre.diff, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.ldl <- lm(`s-ldl` ~ group, data = pre.diff)
+summary(lm.ldl)
+
+# fjerner fp med ekstreme verdier i ldl
+ldl <- pre.diff %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 015") %>%
+  print()
+
+ggplot(ldl, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.ldl.uten <- lm(`s-ldl` ~ group, data = ldl)
+summary(lm.ldl.uten)
+
+ggplot(pre.diff, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
+lm.pwv <- lm(pwv ~ group, data = pre.diff)
+summary(lm.pwv)
+
+```

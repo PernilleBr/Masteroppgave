@@ -1,0 +1,50 @@
+---
+title: "ITT"
+author: "Pernille Breili"
+date: "2023-03-01"
+output: html_document
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# ordner et datasett som skal brukes til statistisk analyse for visceralt fett
+itt.vat.stat <- Resultatskjema %>%
+  select(id, sex, group, time, vat_mass) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post")),
+         group = factor(group, levels = c("fls", "kon"))) %>%
+  pivot_wider(names_from = time,
+              values_from = vat_mass) %>%
+  drop_na() %>%
+  mutate(change = post - pre) %>%
+  mutate(change.pros = ((pre - post)/ pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(itt.vat.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(itt.vat.stat, aes(sample = pre)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(itt.vat.stat, aes(sample = post)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra post til pre 
+itt.vat.lm <- lm(change ~ group, data = itt.vat.stat)
+summary(itt.vat.lm)
+
+# ordner et datasett for å lage grafer - gjennomsnittlig score og sd
+itt.vat.mean <- Resultatskjema %>%
+  select(id, sex, group, time, vat_mass) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post")),
+         group = factor(group, levels = c("fls", "kon"))) %>%
+  pivot_wider(names_from = time,
+              values_from = vat_mass) %>%
+  drop_na() %>%
+  mutate(change = ((post - pre) / pre) * 100 ) %>%
+  group_by(group) %>%
+  summarise(mean.change = mean(change),
+            sd.change = sd(change)) %>%
+  print()
+```
+

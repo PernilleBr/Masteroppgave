@@ -1,0 +1,36 @@
+---
+title: "Grenseverdier"
+author: "Pernille Breili"
+date: "2023-03-03"
+output: html_document
+---
+
+```{r}
+# hvor mange ligger over grenseverdiene ved pre og post test? 
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+grenseverdier <- Resultatskjema %>%
+  select(id, age, sex, group, time, wc, vat_mass, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv) %>%
+  # endrer fra chr til dbl
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  print()
+
+# teller antall som er over grenseverdiene justert etter kjønn, gruppe og pre/post
+sum(grenseverdier$wc >= 80 & grenseverdier$sex == '1' & grenseverdier$time == 'pre' & grenseverdier$group == 'fls', na.rm = TRUE)
+sum(grenseverdier$wc >= 80 & grenseverdier$sex == '1' & grenseverdier$time == 'pre' & grenseverdier$group == 'kon', na.rm = TRUE)
+sum(grenseverdier$wc >= 94 & grenseverdier$sex == '2' & grenseverdier$time == 'pre' & grenseverdier$group == 'fls', na.rm = TRUE)
+sum(grenseverdier$wc >= 94 & grenseverdier$sex == '2' & grenseverdier$time == 'pre' & grenseverdier$group == 'kon', na.rm = TRUE)
+sum(grenseverdier$wc >= 80 & grenseverdier$sex == '1' & grenseverdier$time == 'post' & grenseverdier$group == 'fls', na.rm = TRUE)
+sum(grenseverdier$wc >= 80 & grenseverdier$sex == '1' & grenseverdier$time == 'post' & grenseverdier$group == 'kon', na.rm = TRUE)
+sum(grenseverdier$wc >= 94 & grenseverdier$sex == '2' & grenseverdier$time == 'post' & grenseverdier$group == 'fls', na.rm = TRUE)
+sum(grenseverdier$wc >= 94 & grenseverdier$sex == '2' & grenseverdier$time == 'post' & grenseverdier$group == 'kon', na.rm = TRUE)
+
+
+```
+

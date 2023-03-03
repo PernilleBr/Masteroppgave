@@ -48,7 +48,7 @@ itt.count <- Resultatskjema %>%
   pivot_wider(names_from = time,
               values_from = value) %>%
   drop_na() %>%
-  count(variable, group) %>%
+  add_count(variable, group) %>%
   print()
 ```
 ```{r}

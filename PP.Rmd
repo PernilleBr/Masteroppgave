@@ -1,17 +1,21 @@
 ---
-title: "Intention to treat"
+title: "Per protocol"
 author: "Pernille Breili"
-date: "2023-03-02"
+date: "2023-03-03"
 output: html_document
 ---
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
-# MIDJEOMKRETS
+# VISCERALT FETT
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
-itt.vat.stat <- Resultatskjema %>%
+pp.vat.stat <- Resultatskjema %>%
   select(id, sex, group, time, vat_mass) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
   mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
@@ -26,30 +30,33 @@ itt.vat.stat <- Resultatskjema %>%
   print()
 
 # sjekker normalfordelingen 
-ggplot(itt.vat.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(pp.vat.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
 
 # analyse av endringsscore fra pre til post mellom gruppene
-itt.vat.lm <- lm(change ~ group, data = itt.vat.stat)
-summary(itt.vat.lm)
+pp.vat.lm <- lm(change ~ group, data = pp.vat.stat)
+summary(pp.vat.lm)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
-mean.itt.vat <- itt.vat.stat %>%
+mean.pp.vat <- pp.vat.stat %>%
   summarise(mean.vat.pros = mean(change.pros),
             sd.vat.pros = sd(change.pros)) %>%
   print()
 
 # lager graf for gjennomsnittsscore i prosent med individuelle endringer
-mean.itt.vat %>%
-  ggplot(aes(group, mean.vat.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = itt.vat.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.vat.pros - sd.vat.pros, ymax = mean.vat.pros + sd.vat.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Visceralt fett (% endring)")
-
+mean.pp.vat %>%
+  ggplot(aes(group, mean.vat.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = pp.vat.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.vat.pros - sd.vat.pros, ymax = mean.vat.pros + sd.vat.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Visceralt fett (% endring)")
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
 # MIDJEOMKRETS
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
-itt.wc.stat <- Resultatskjema %>%
+pp.wc.stat <- Resultatskjema %>%
   select(id, sex, group, time, wc) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
   mutate(wc = as.numeric(wc, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
@@ -64,33 +71,35 @@ itt.wc.stat <- Resultatskjema %>%
   print()
 
 # sjekker normalfordelingen 
-ggplot(itt.wc.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(pp.wc.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
 
 # analyse av endringsscore fra pre til post mellom gruppene
-itt.wc.lm <- lm(change ~ group, data = itt.wc.stat)
-summary(itt.wc.lm)
+pp.wc.lm <- lm(change ~ group, data = pp.wc.stat)
+summary(pp.wc.lm)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
-mean.itt.wc <- itt.wc.stat %>%
+mean.pp.wc <- pp.wc.stat %>%
   summarise(mean.wc.pros = mean(change.pros),
             sd.wc.pros = sd(change.pros)) %>%
   print()
 
 # lager graf for gjennomsnittsscore i prosent med individuelle endringer
-mean.itt.wc %>%
-  ggplot(aes(group, mean.wc.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = itt.wc.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.wc.pros - sd.wc.pros, ymax = mean.wc.pros + sd.wc.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Midjeomkrets (% endring)")
+mean.pp.wc %>%
+  ggplot(aes(group, mean.wc.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = pp.wc.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.wc.pros - sd.wc.pros, ymax = mean.wc.pros + sd.wc.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Midjeomkrets (% endring)")
 
 ```
-
-
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
 # BLODLIPIDER
 #Triglyserider
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post
-itt.trigl.stat <- Resultatskjema %>%
+pp.trigl.stat <- Resultatskjema %>%
   select(id, sex, group, time, `s-triglyserider`) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
   mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
@@ -105,22 +114,21 @@ itt.trigl.stat <- Resultatskjema %>%
   print()
 
 # sjekker normalfordelingen 
-ggplot(itt.trigl.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(pp.trigl.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
-mean.itt.trigl <- itt.trigl.stat %>%
+mean.pp.trigl <- pp.trigl.stat %>%
   summarise(mean.trigl.pros = mean(change.pros),
             sd.trigl.pros = sd(change.pros)) %>%
   print()
 
 # analyse av endringsscore fra pre til post mellom gruppene
-itt.trigl.lm <- lm(change ~ group, data = itt.trigl.stat)
-summary(itt.trigl.lm)
+pp.trigl.lm <- lm(change ~ group, data = pp.trigl.stat)
+summary(pp.trigl.lm)
 
 # lager graf for gjennomsnittsscore i prosent med individuelle endringer
-mean.itt.trigl %>%
-  ggplot(aes(group, mean.trigl.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = itt.trigl.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.trigl.pros - sd.trigl.pros, ymax = mean.trigl.pros + sd.trigl.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Triglyserider (% endring)")
-
+mean.pp.trigl %>%
+  ggplot(aes(group, mean.trigl.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = pp.trigl.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.trigl.pros - sd.trigl.pros, ymax = mean.trigl.pros + sd.trigl.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Triglyserider (% endring)")
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
@@ -128,8 +136,12 @@ Resultatskjema <- read_excel("Resultatskjema.xlsx")
 # BLODLIPIDER
 # LDL
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post
-itt.ldl.stat <- Resultatskjema %>%
+pp.ldl.stat <- Resultatskjema %>%
   select(id, sex, group, time, `s-ldl`) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
   mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
@@ -144,31 +156,34 @@ itt.ldl.stat <- Resultatskjema %>%
   print()
 
 # sjekker normalfordelingen 
-ggplot(itt.ldl.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(pp.ldl.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
-mean.itt.ldl <- itt.ldl.stat %>%
+mean.pp.ldl <- pp.ldl.stat %>%
   summarise(mean.ldl.pros = mean(change.pros),
             sd.ldl.pros = sd(change.pros)) %>%
   print()
 
 # analyse av endringsscore fra pre til post mellom gruppene
-itt.ldl.lm <- lm(change ~ group, data = itt.ldl.stat)
-summary(itt.ldl.lm)
+pp.ldl.lm <- lm(change ~ group, data = pp.ldl.stat)
+summary(pp.ldl.lm)
 
 # lager graf for gjennomsnittsscore i prosent med individuelle endringer
-mean.itt.ldl %>%
-  ggplot(aes(group, mean.ldl.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = itt.ldl.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.ldl.pros - sd.ldl.pros, ymax = mean.ldl.pros + sd.ldl.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "LDL-kolesterol (% endring)")
+mean.pp.ldl %>%
+  ggplot(aes(group, mean.ldl.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = pp.ldl.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.ldl.pros - sd.ldl.pros, ymax = mean.ldl.pros + sd.ldl.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "LDL-kolesterol (% endring)")
 ```
-
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
 # BLODLIPIDER
 # HDL
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post
-itt.hdl.stat <- Resultatskjema %>%
+pp.hdl.stat <- Resultatskjema %>%
   select(id, sex, group, time, `s-hdl`) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
   mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
@@ -183,30 +198,33 @@ itt.hdl.stat <- Resultatskjema %>%
   print()
 
 # sjekker normalfordelingen 
-ggplot(itt.hdl.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(pp.hdl.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
-mean.itt.hdl <- itt.hdl.stat %>%
+mean.pp.hdl <- pp.hdl.stat %>%
   summarise(mean.hdl.pros = mean(change.pros),
             sd.hdl.pros = sd(change.pros)) %>%
   print()
 
 # analyse av endringsscore fra pre til post mellom gruppene
-itt.hdl.lm <- lm(change ~ group, data = itt.hdl.stat)
-summary(itt.hdl.lm)
-plot(itt.hdl.lm)
+pp.hdl.lm <- lm(change ~ group, data = pp.hdl.stat)
+summary(pp.hdl.lm)
 
 # lager graf for gjennomsnittsscore i prosent med individuelle endringer
-mean.itt.hdl %>%
-  ggplot(aes(group, mean.hdl.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = itt.hdl.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.hdl.pros - sd.hdl.pros, ymax = mean.hdl.pros + sd.hdl.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "HDL-kolesterol (% endring)")
+mean.pp.hdl %>%
+  ggplot(aes(group, mean.hdl.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = pp.hdl.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.hdl.pros - sd.hdl.pros, ymax = mean.hdl.pros + sd.hdl.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "HDL-kolesterol (% endring)")
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
 # GLUKOSE
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post
-itt.gluk.stat <- Resultatskjema %>%
+pp.gluk.stat <- Resultatskjema %>%
   select(id, sex, group, time, `s-glukose`) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
   mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
@@ -221,29 +239,33 @@ itt.gluk.stat <- Resultatskjema %>%
   print()
 
 # sjekker normalfordelingen 
-ggplot(itt.gluk.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(pp.gluk.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
-mean.itt.gluk <- itt.gluk.stat %>%
+mean.pp.gluk <- pp.gluk.stat %>%
   summarise(mean.gluk.pros = mean(change.pros),
             sd.gluk.pros = sd(change.pros)) %>%
   print()
 
 # analyse av endringsscore fra pre til post mellom gruppene
-itt.gluk.lm <- lm(change ~ group, data = itt.gluk.stat)
-summary(itt.gluk.lm)
+pp.gluk.lm <- lm(change ~ group, data = pp.gluk.stat)
+summary(pp.gluk.lm)
 
 # lager graf for gjennomsnittsscore i prosent med individuelle endringer
-mean.itt.gluk %>%
-  ggplot(aes(group, mean.gluk.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = itt.gluk.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.gluk.pros - sd.gluk.pros, ymax = mean.gluk.pros + sd.gluk.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Glukose (% endring)")
+mean.pp.gluk %>%
+  ggplot(aes(group, mean.gluk.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = pp.gluk.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.gluk.pros - sd.gluk.pros, ymax = mean.gluk.pros + sd.gluk.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Glukose (% endring)")
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
 # ARTERIELL STIVHET
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post
-itt.pwv.stat <- Resultatskjema %>%
+pp.pwv.stat <- Resultatskjema %>%
   select(id, sex, group, time, pwv) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
   mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
@@ -258,20 +280,21 @@ itt.pwv.stat <- Resultatskjema %>%
   print()
 
 # sjekker normalfordelingen 
-ggplot(itt.pwv.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
+ggplot(pp.pwv.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red")
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
-mean.itt.pwv <- itt.pwv.stat %>%
+mean.pp.pwv <- pp.pwv.stat %>%
   summarise(mean.pwv.pros = mean(change.pros),
             sd.pwv.pros = sd(change.pros)) %>%
   print()
 
 # analyse av endringsscore fra pre til post mellom gruppene
-itt.pwv.lm <- lm(change ~ group, data = itt.pwv.stat)
-summary(itt.pwv.lm)
+pp.pwv.lm <- lm(change ~ group, data = pp.pwv.stat)
+summary(pp.pwv.lm)
 
 # lager graf for gjennomsnittsscore i prosent med individuelle endringer
-mean.itt.pwv %>%
-  ggplot(aes(group, mean.pwv.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = itt.pwv.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.pwv.pros - sd.pwv.pros, ymax = mean.pwv.pros + sd.pwv.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Pulsbølgehastighet (% endring)")
+mean.pp.pwv %>%
+  ggplot(aes(group, mean.pwv.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = pp.pwv.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.pwv.pros - sd.pwv.pros, ymax = mean.pwv.pros + sd.pwv.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Pulsbølgehastighet (% endring)")
 ```
+
 
