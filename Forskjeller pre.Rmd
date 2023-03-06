@@ -14,9 +14,8 @@ pre.diff <- Resultatskjema %>%
   select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv) %>% 
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
-  # grupperer etter gruppe og kjønn
+  # grupperer etter gruppe 
   group_by(group) %>%
-  # lager en ny variabler som teller antall i grupperte variabler
   mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
   mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
   mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%

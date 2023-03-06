@@ -1,0 +1,34 @@
+---
+title: "Prosent endring"
+author: "Pernille Breili"
+date: "2023-03-06"
+output: html_document
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+itt.meanchange <- Resultatskjema %>%
+  select(id, sex, group, time, wc, vat_mass, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                       labels = c("Intervensjon", "Kontroll"))) %>%
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = wc:pwv) %>%
+  pivot_wider(names_from = time,
+              values_from = value) %>%
+  mutate(change = Post -Pre) %>% 
+  drop_na() %>%
+  group_by(group, sex) %>%
+  print()
+```
+

@@ -1,0 +1,169 @@
+---
+title: "Within group"
+author: "Pernille Breili"
+date: "2023-03-06"
+output: html_document
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(rstatix)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+data.within <- Resultatskjema %>%
+  # velger relevante variabler
+  select(id, group, time, sex, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv) %>%
+  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
+  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
+  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
+  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(vat_volume = as.numeric(vat_volume, na.rm = TRUE)) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  select(-vo2max_ml_min_kg_6x5) %>%
+  drop_na() %>%
+  print()
+
+data.within.fls <- data.within %>%
+  filter(group == "fls") %>%
+  print()
+
+# sjekker within-forskjeller i fls-gruppen
+ggplot(data.within.fls, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.mass <- lm(total_mass ~ time, data = data.within.fls)
+summary(lm.within.mass)
+
+ggplot(data.within.fls, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.bmi <- lm(bmi ~ time, data = data.within.fls)
+summary(lm.within.bmi)
+
+ggplot(data.within.fls, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.fat <- lm(fat_mass ~ time, data = data.within.fls)
+summary(lm.within.fat)
+
+ggplot(data.within.fls, aes(sample = lean_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.lean <- lm(lean_mass ~ time, data = data.within.fls)
+summary(lm.within.lean)
+
+ggplot(data.within.fls, aes(sample = sys)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.sys <- lm(sys ~ time, data = data.within.fls)
+summary(lm.within.sys)
+
+ggplot(data.within.fls, aes(sample = dia)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.dia <- lm(dia ~ time, data = data.within.fls)
+summary(lm.within.dia)
+
+ggplot(data.within.fls, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.wc <- lm(wc ~ time, data = data.within.fls)
+summary(lm.within.wc)
+
+ggplot(data.within.fls, aes(sample = handgrip)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.handgrip <- lm(handgrip ~ time, data = data.within.fls)
+summary(lm.within.handgrip)
+
+ggplot(data.within.fls, aes(sample = vat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.vat <- lm(vat_mass ~ time, data = data.within.fls)
+summary(lm.within.vat)
+
+ggplot(data.within.fls, aes(sample = vat_volume)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.vatvol <- lm(vat_volume ~ time, data = data.within.fls)
+summary(lm.within.vatvol)
+
+ggplot(data.within.fls, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.gluk <- lm(`s-glukose` ~ time, data = data.within.fls)
+summary(lm.within.gluk)
+
+ggplot(data.within.fls, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.trigl <- lm(`s-triglyserider` ~ time, data = data.within.fls)
+summary(lm.within.trigl)
+
+ggplot(data.within.fls, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.ldl <- lm(`s-ldl` ~ time, data = data.within.fls)
+summary(lm.within.ldl)
+
+ggplot(data.within.fls, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.hdl <- lm(`s-hdl` ~ time, data = data.within.fls)
+summary(lm.within.hdl)
+
+ggplot(data.within.fls, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.pwv <- lm(pwv ~ time, data = data.within.fls)
+summary(lm.within.pwv)
+
+ggplot(data.within.fls, aes(sample = vo2max_ml_min_kg)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.vo2 <- lm(vo2max_ml_min_kg ~ time, data = data.within.fls)
+summary(lm.within.vo2)
+
+data.within.kon <- data.within %>%
+  filter(group == "kon") %>%
+  print()
+
+# sjekker within-forskjeller i kontroll-gruppen
+ggplot(data.within.kon, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.mass <- lm(total_mass ~ time, data = data.within.kon)
+summary(kon.lm.within.mass)
+
+ggplot(data.within.kon, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.bmi <- lm(bmi ~ time, data = data.within.kon)
+summary(kon.lm.within.bmi)
+
+ggplot(data.within.kon, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.fat <- lm(fat_mass ~ time, data = data.within.kon)
+summary(kon.lm.within.fat)
+
+ggplot(data.within.kon, aes(sample = lean_mass)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.lean <- lm(lean_mass ~ time, data = data.within.kon)
+summary(kon.lm.within.lean)
+
+ggplot(data.within.kon, aes(sample = sys)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.sys <- lm(sys ~ time, data = data.within.kon)
+summary(kon.lm.within.sys)
+
+ggplot(data.within.kon, aes(sample = dia)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.dia <- lm(dia ~ time, data = data.within.kon)
+summary(kon.lm.within.dia)
+
+ggplot(data.within.kon, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.wc <- lm(wc ~ time, data = data.within.kon)
+summary(kon.lm.within.wc)
+
+ggplot(data.within.kon, aes(sample = handgrip)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.handgrip <- lm(handgrip ~ time, data = data.within.kon)
+summary(kon.lm.within.handgrip)
+
+ggplot(data.within.kon, aes(sample = vat_mass)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.vat <- lm(vat_mass ~ time, data = data.within.kon)
+summary(kon.lm.within.vat)
+
+ggplot(data.within.kon, aes(sample = vat_volume)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.vatvol <- lm(vat_volume ~ time, data = data.within.kon)
+summary(kon.lm.within.vatvol)
+
+ggplot(data.within.kon, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.gluk <- lm(`s-glukose` ~ time, data = data.within.kon)
+summary(kon.lm.within.gluk)
+
+ggplot(data.within.kon, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.trigl <- lm(`s-triglyserider` ~ time, data = data.within.kon)
+summary(kon.lm.within.trigl)
+
+ggplot(data.within.kon, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.ldl <- lm(`s-ldl` ~ time, data = data.within.kon)
+summary(kon.lm.within.ldl)
+
+ggplot(data.within.kon, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.hdl <- lm(`s-hdl` ~ time, data = data.within.kon)
+summary(kon.lm.within.hdl)
+
+ggplot(data.within.kon, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.pwv <- lm(pwv ~ time, data = data.within.kon)
+summary(kon.lm.within.pwv)
+
+ggplot(data.within.kon, aes(sample = vo2max_ml_min_kg)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.vo2 <- lm(vo2max_ml_min_kg ~ time, data = data.within.kon)
+summary(kon.lm.within.vo2)
+```
+
+
