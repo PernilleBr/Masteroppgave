@@ -33,52 +33,97 @@ pre.diff <- Resultatskjema %>%
 ggplot(pre.diff, aes(sample = age)) + stat_qq() + stat_qq_line(col = "red")
 lm.age <- lm(age ~ group, data = pre.diff)
 summary(lm.age)
+confint(lm.age)
+
+lm.age.co <- lm(age ~ group + sex, data = pre.diff)
+summary(lm.age.co)
 
 ggplot(pre.diff, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
 lm.height <- lm(height ~ group, data = pre.diff)
 summary(lm.height)
+confint(lm.height)
+
+lm.height.co <- lm(height ~ group + sex, data = pre.diff)
+summary(lm.height.co)
 
 ggplot(pre.diff, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
-lm.mass <- lm(lean_mass ~ group, data = pre.diff)
+lm.mass <- lm(total_mass ~ group, data = pre.diff)
 summary(lm.mass)
+confint(lm.mass)
+
+lm.mass.co <- lm(total_mass ~ group + sex, data = pre.diff)
+summary(lm.mass.co)
 
 # bmi er signifikant forskjellig mellom gruppene
 ggplot(pre.diff, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
 lm.bmi <- lm(bmi ~ group, data = pre.diff)
 summary(lm.bmi)
+confint(lm.bmi)
+
+lm.bmi.co <- lm(bmi ~ group + sex, data = pre.diff)
+summary(lm.bmi.co)
 
 # fettmasse er signifikant forskjellig mellom gruppene
 ggplot(pre.diff, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
 lm.fat <- lm(fat_mass ~ group, data = pre.diff)
 summary(lm.fat)
+confint(lm.fat)
+
+lm.fat.co <- lm(fat_mass ~ group + sex, data = pre.diff)
+summary(lm.fat.co)
 
 ggplot(pre.diff, aes(sample = lean_mass)) + stat_qq() + stat_qq_line(col = "red")
 lm.lean <- lm(lean_mass ~ group, data = pre.diff)
 summary(lm.lean)
+confint(lm.lean)
+
+lm.lean.co <- lm(lean_mass ~ group + sex, data = pre.diff)
+summary(lm.lean.co)
 
 ggplot(pre.diff, aes(sample = sys)) + stat_qq() + stat_qq_line(col = "red")
 lm.sys <- lm(sys ~ group, data = pre.diff)
 summary(lm.sys)
+confint(lm.sys)
+
+lm.sys.co <- lm(sys ~ group + sex, data = pre.diff)
+summary(lm.sys.co)
 
 ggplot(pre.diff, aes(sample = dia)) + stat_qq() + stat_qq_line(col = "red")
 lm.dia <- lm(dia ~ group, data = pre.diff)
 summary(lm.dia)
+confint(lm.dia)
+
+lm.dia.co <- lm(dia ~ group + sex, data = pre.diff)
+summary(lm.dia.co)
 
 ggplot(pre.diff, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
 lm.wc <- lm(wc ~ group, data = pre.diff)
 summary(lm.wc)
+confint(lm.wc)
+
+lm.wc.co <- lm(wc ~ group + sex, data = pre.diff)
+summary(lm.wc.co)
 
 ggplot(pre.diff, aes(sample = handgrip)) + stat_qq() + stat_qq_line(col = "red")
 lm.hg <- lm(handgrip ~ group, data = pre.diff)
 summary(lm.hg)
 
+lm.hg.co <- lm(handgrip ~ group + sex, data = pre.diff)
+summary(lm.hg.co)
+
 ggplot(pre.diff, aes(sample = vo2max_ml_min_kg)) + stat_qq() + stat_qq_line(col = "red")
 lm.vo2 <- lm(vo2max_ml_min_kg ~ group, data = pre.diff)
 summary(lm.vo2)
 
+lm.vo2.co <- lm(vo2max_ml_min_kg ~ group + sex, data = pre.diff)
+summary(lm.vo2.co)
+
 ggplot(pre.diff, aes(sample = vat_mass)) + stat_qq() + stat_qq_line(col = "red")
 lm.vat <- lm(vat_mass ~ group, data = pre.diff)
 summary(lm.vat)
+
+lm.vat.co <- lm(vat_mass ~ group + sex, data = pre.diff)
+summary(lm.vat.co)
 
 ggplot(pre.diff, aes(sample = vat_volume)) + stat_qq() + stat_qq_line(col = "red")
 lm.vatv <- lm(vat_volume ~ group, data = pre.diff)
@@ -98,9 +143,15 @@ ggplot(pre.diff, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "re
 lm.gluk.med <- lm(`s-glukose` ~ group, data = pre.diff)
 summary(lm.gluk.med)
 
+lm.gluk.med.co <- lm(`s-glukose` ~ group + sex, data = pre.diff)
+summary(lm.gluk.med.co)
+
 ggplot(pre.diff, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
 lm.trigl <- lm(`s-triglyserider` ~ group, data = pre.diff)
 summary(lm.trigl)
+
+lm.trigl.co <- lm(`s-triglyserider` ~ group + sex, data = pre.diff)
+summary(lm.trigl.co)
 
 # fjerner 3xfp med ekstreme verdier i triglyserider
 trigl <- pre.diff %>%
@@ -118,6 +169,9 @@ ggplot(pre.diff, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
 lm.hdl <- lm(`s-hdl` ~ group, data = pre.diff)
 summary(lm.hdl)
 
+lm.hdl.co <- lm(`s-hdl` ~ group + sex, data = pre.diff)
+summary(lm.hdl.co)
+
 # fjerner fp med ekstreme verdier i hdl
 hdl <- pre.diff %>%
   filter(id != "tr031 005") %>%
@@ -130,6 +184,10 @@ summary(lm.hdl.uten)
 ggplot(pre.diff, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
 lm.ldl <- lm(`s-ldl` ~ group, data = pre.diff)
 summary(lm.ldl)
+
+ggplot(pre.diff, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.ldl.co <- lm(`s-ldl` ~ group + sex, data = pre.diff)
+summary(lm.ldl.co)
 
 # fjerner fp med ekstreme verdier i ldl
 ldl <- pre.diff %>%
@@ -145,5 +203,9 @@ summary(lm.ldl.uten)
 ggplot(pre.diff, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
 lm.pwv <- lm(pwv ~ group, data = pre.diff)
 summary(lm.pwv)
+
+ggplot(pre.diff, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
+lm.pwv.co <- lm(pwv ~ group + sex, data = pre.diff)
+summary(lm.pwv.co)
 
 ```

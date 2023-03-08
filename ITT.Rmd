@@ -86,9 +86,7 @@ mean.itt.wc %>%
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
-# BLODLIPIDER
-#Triglyserider
-# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post
+
 itt.trigl.stat <- Resultatskjema %>%
   select(id, sex, group, time, `s-triglyserider`) %>%
   mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
