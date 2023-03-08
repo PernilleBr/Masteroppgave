@@ -248,16 +248,16 @@ table1 <- Resultatskjema %>%
 
 # slår sammen tabellene til en
 table.baselinechar <- inner_join(x = table2, y = table1) %>%
-  select(variable, kon, kon_1, kon_2, fls, fls_1, fls_2) %>%
+  select(variable, fls, fls_1, fls_2, kon, kon_1, kon_2) %>%
   flextable() %>%
   set_header_labels(variable = "",
-                    kon = "Begge kjønn",
-                    kon_1 = "Kvinner",
-                    kon_2 = "Menn",
                     fls = "Begge kjønn",
                     fls_1 = "Kvinner",
-                    fls_2 = "Menn") %>%
-  add_header_row(values = c("", "Kontroll", "Kontroll", "Kontroll", "Intervensjon", "Intervensjon", "Intervensjon")) %>%
+                    fls_2 = "Menn", 
+                    kon = "Begge kjønn",
+                    kon_1 = "Kvinner",
+                    kon_2 = "Menn") %>%
+  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "Kontroll")) %>%
   # samler gruppene i en rad
   merge_at(part = "header", i = 1, j = 2:4) %>%
   merge_at(part = "header", i = 1, j = 5:7) %>%
