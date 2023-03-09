@@ -1,0 +1,187 @@
+---
+title: "PWV"
+author: "Pernille Breili"
+date: "2023-03-09"
+output: html_document
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+
+# analyse intention to treat TG
+itt.pwv <- Resultatskjema.ITT %>%
+  select(id, group, sex, time, pwv) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = pwv) %>%
+  mutate(change.pwv.itt = Post - Pre) %>%
+  mutate(change.pwv.itt.pros = ((Post - Pre) / Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(itt.pwv, aes(sample = change.pwv.itt)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+itt.pwv.lm <- lm(change.pwv.itt ~ group, data = itt.pwv)
+summary(itt.pwv.lm)
+
+# sjekker for kovariat
+itt.pwv.lm.co. <- lm(change.pwv.itt ~ group + sex + Pre, data = itt.pwv)
+summary(itt.pwv.lm.co.)
+
+itt.pwv.lm.co.pre <- lm(change.pwv.itt ~ group + Pre, data = itt.pwv)
+summary(itt.pwv.lm.co.pre)
+
+itt.pwv.lm.co.sex <- lm(change.pwv.itt ~ group + sex, data = itt.pwv)
+summary(itt.pwv.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av endring for bruk i graf
+mean.itt.pwv <- itt.pwv %>%
+  drop_na() %>%
+  summarise(mean.pwv = mean(change.pwv.itt),
+            sd.pwv = sd(change.pwv.itt)) %>%
+  print()
+
+# lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
+dropout.itt.pwv <- itt.pwv %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  drop_na() %>%
+  print()
+
+# lager graf
+figur.pwv.itt <- mean.itt.pwv %>%
+  ggplot(aes(group, mean.pwv, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.pwv - sd.pwv, ymax = mean.pwv + sd.pwv), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.pwv, aes(group, change.pwv.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i pulsbølgehastighet (m/s)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.5, 2)
+
+figur.pwv.itt
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 1 treningsøkt per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+pp.pwv <- Resultatskjema %>%
+  select(id, sex, group, time, pwv) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = pwv) %>%
+  mutate(change.pwv.pp = Post - Pre) %>%
+  mutate(change.pwv.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(pp.pwv, aes(sample = change.pwv.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+pp.pwv.lm <- lm(change.pwv.pp ~ group, data = pp.pwv)
+summary(pp.pwv.lm)
+
+# sjekker for kovariat
+pp.pwv.lm.co <- lm(change.pwv.pp ~ group + sex + Pre, data = pp.pwv)
+summary(pp.pwv.lm.co)
+
+pp.pwv.lm.co.pre <- lm(change.pwv.pp ~ group + Pre, data = pp.pwv)
+summary(pp.pwv.lm.co.pre)
+
+pp.pwv.lm.co.sex <- lm(change.pwv.pp ~ group + sex + Pre, data = pp.pwv)
+summary(pp.pwv.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.pp.pwv <- pp.pwv %>%
+  summarise(mean.pwv.pp = mean(change.pwv.pp),
+            sd.pwv.pp = sd(change.pwv.pp)) %>%
+  print()
+
+figur.pwv.pp <- mean.pp.pwv %>%
+  ggplot(aes(group, mean.pwv.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.pwv.pp - sd.pwv.pp, ymax = mean.pwv.pp + sd.pwv.pp), width = 0.1) + theme_classic() + geom_point(data = pp.pwv, aes(group, change.pwv.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i pulsbølgehastighet (m/s)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.5, 2)
+
+figur.pwv.pp
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 2 treningsøkter per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+ppm.pwv <- Resultatskjema %>%
+  select(id, sex, group, time, pwv) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  # filtrerer ut irrelevante datapunkter
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = pwv) %>%
+  mutate(change.pwv.ppm = Post - Pre) %>%
+  mutate(change.pwv.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(ppm.pwv, aes(sample = change.pwv.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+ppm.pwv.lm <- lm(change.pwv.ppm ~ group, data = ppm.pwv)
+summary(ppm.pwv.lm)
+
+# sjekker for kovariat
+ppm.pwv.lm.co <- lm(change.pwv.ppm ~ group + sex + Pre, data = ppm.pwv)
+summary(ppm.pwv.lm.co)
+
+ppm.pwv.lm.co.pre <- lm(change.pwv.ppm ~ group + Pre, data = ppm.pwv)
+summary(ppm.pwv.lm.co.pre)
+
+ppm.pwv.lm.co.sex <- lm(change.pwv.ppm ~ group + sex + Pre, data = ppm.pwv)
+summary(ppm.pwv.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.ppm.pwv <- ppm.pwv %>%
+  summarise(mean.pwv.ppm = mean(change.pwv.ppm),
+            sd.pwv.ppm = sd(change.pwv.ppm)) %>%
+  print()
+
+figur.pwv.ppm <- mean.ppm.pwv %>%
+  ggplot(aes(group, mean.pwv.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.pwv.ppm - sd.pwv.ppm, ymax = mean.pwv.ppm + sd.pwv.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.pwv, aes(group, change.pwv.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i pulsbølgehastighet (m/s)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.5, 2)
+
+figur.pwv.ppm
+```
+

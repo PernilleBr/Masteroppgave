@@ -1,0 +1,550 @@
+---
+title: "Lipider"
+author: "Pernille Breili"
+date: "2023-03-09"
+output: html_document
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+
+# analyse intention to treat TG
+itt.tg <- Resultatskjema.ITT %>%
+  select(id, group, sex, time, `s-triglyserider`) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  drop_na() %>%
+  pivot_wider(names_from = time,
+              values_from = `s-triglyserider`) %>%
+  mutate(change.tg.itt = Post - Pre) %>%
+  mutate(change.tg.itt.pros = ((Post - Pre) / Pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(itt.tg, aes(sample = change.tg.itt)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+itt.tg.lm <- lm(change.tg.itt ~ group, data = itt.tg)
+summary(itt.tg.lm)
+
+# sjekker for kovariat
+itt.tg.lm.co. <- lm(change.tg.itt ~ group + sex + Pre, data = itt.tg)
+summary(itt.tg.lm.co.)
+
+itt.tg.lm.co.pre <- lm(change.tg.itt ~ group + Pre, data = itt.tg)
+summary(itt.tg.lm.co.pre)
+
+itt.tg.lm.co.sex <- lm(change.tg.itt ~ group + sex, data = itt.tg)
+summary(itt.tg.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av endring for bruk i graf
+mean.itt.tg <- itt.tg %>%
+  drop_na() %>%
+  summarise(mean.tg = mean(change.tg.itt),
+            sd.tg = sd(change.tg.itt)) %>%
+  print()
+
+# lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
+dropout.itt.tg <- itt.tg %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  drop_na() %>%
+  print()
+
+# lager graf
+figur.tg.itt <- mean.itt.tg %>%
+  ggplot(aes(group, mean.tg, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg - sd.tg, ymax = mean.tg + sd.tg), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.tg, aes(group, change.tg.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i triglyserider (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8)
+
+figur.tg.itt
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 1 treningsøkt per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+pp.tg <- Resultatskjema %>%
+  select(id, sex, group, time, `s-triglyserider`) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-triglyserider`) %>%
+  mutate(change.tg.pp = Post - Pre) %>%
+  mutate(change.tg.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(pp.tg, aes(sample = change.tg.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+pp.tg.lm <- lm(change.tg.pp ~ group, data = pp.tg)
+summary(pp.tg.lm)
+
+# sjekker for kovariat
+pp.tg.lm.co <- lm(change.tg.pp ~ group + sex + Pre, data = pp.tg)
+summary(pp.tg.lm.co)
+
+pp.tg.lm.co.pre <- lm(change.tg.pp ~ group + Pre, data = pp.tg)
+summary(pp.tg.lm.co.pre)
+
+pp.tg.lm.co.sex <- lm(change.tg.pp ~ group + sex + Pre, data = pp.tg)
+summary(pp.tg.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.pp.tg <- pp.tg %>%
+  summarise(mean.tg.pp = mean(change.tg.pp),
+            sd.tg.pp = sd(change.tg.pp)) %>%
+  print()
+
+figur.tg.pp <- mean.pp.tg %>%
+  ggplot(aes(group, mean.tg.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.pp - sd.tg.pp, ymax = mean.tg.pp + sd.tg.pp), width = 0.1) + theme_classic() + geom_point(data = pp.tg, aes(group, change.tg.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i triglyserider (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8)
+
+figur.tg.pp
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 2 treningsøkter per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+ppm.tg <- Resultatskjema %>%
+  select(id, sex, group, time, `s-triglyserider`) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  # filtrerer ut irrelevante datapunkter
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-triglyserider`) %>%
+  mutate(change.tg.ppm = Post - Pre) %>%
+  mutate(change.tg.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(ppm.tg, aes(sample = change.tg.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+ppm.tg.lm <- lm(change.tg.ppm ~ group, data = ppm.tg)
+summary(ppm.tg.lm)
+
+# sjekker for kovariat
+ppm.tg.lm.co <- lm(change.tg.ppm ~ group + sex + Pre, data = ppm.tg)
+summary(ppm.tg.lm.co)
+
+ppm.tg.lm.co.pre <- lm(change.tg.ppm ~ group + Pre, data = ppm.tg)
+summary(ppm.tg.lm.co.pre)
+
+ppm.tg.lm.co.sex <- lm(change.tg.ppm ~ group + sex + Pre, data = ppm.tg)
+summary(ppm.tg.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.ppm.tg <- ppm.tg %>%
+  summarise(mean.tg.ppm = mean(change.tg.ppm),
+            sd.tg.ppm = sd(change.tg.ppm)) %>%
+  print()
+
+figur.tg.ppm <- mean.ppm.tg %>%
+  ggplot(aes(group, mean.tg.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.ppm - sd.tg.ppm, ymax = mean.tg.ppm + sd.tg.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.tg, aes(group, change.tg.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i triglyserider (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8)
+
+figur.tg.ppm
+```
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+
+# analyse intention to treat HDL
+itt.hdl <- Resultatskjema.ITT %>%
+  select(id, group, sex, time, `s-hdl`) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-hdl`) %>%
+  mutate(change.hdl.itt = Post - Pre) %>%
+  mutate(change.hdl.itt.pros = ((Post - Pre) / Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(itt.hdl, aes(sample = change.hdl.itt)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+itt.hdl.lm <- lm(change.hdl.itt ~ group, data = itt.hdl)
+summary(itt.hdl.lm)
+
+# sjekker for kovariat
+itt.hdl.lm.co. <- lm(change.hdl.itt ~ group + sex + Pre, data = itt.hdl)
+summary(itt.hdl.lm.co.)
+
+itt.hdl.lm.co.pre <- lm(change.hdl.itt ~ group + Pre, data = itt.hdl)
+summary(itt.hdl.lm.co.pre)
+
+itt.hdl.lm.co.sex <- lm(change.hdl.itt ~ group + sex, data = itt.hdl)
+summary(itt.hdl.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av endring for bruk i graf
+mean.itt.hdl <- itt.hdl %>%
+  drop_na() %>%
+  summarise(mean.hdl = mean(change.hdl.itt),
+            sd.hdl = sd(change.hdl.itt)) %>%
+  print()
+
+# lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
+dropout.itt.hdl <- itt.hdl %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  drop_na() %>%
+  print()
+
+# lager graf
+figur.hdl.itt <- mean.itt.hdl %>%
+  ggplot(aes(group, mean.hdl, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl - sd.hdl, ymax = mean.hdl + sd.hdl), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.hdl, aes(group, change.hdl.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i HDL-kolesterol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
+
+figur.hdl.itt
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 1 treningsøkt per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+pp.hdl <- Resultatskjema %>%
+  select(id, group, sex, time, `s-hdl`) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-hdl`) %>%
+  mutate(change.hdl.pp = Post - Pre) %>%
+  mutate(change.hdl.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(pp.hdl, aes(sample = change.hdl.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+pp.hdl.lm <- lm(change.hdl.pp ~ group, data = pp.hdl)
+summary(pp.hdl.lm)
+
+# sjekker for kovariat
+pp.hdl.lm.co <- lm(change.hdl.pp ~ group + sex + Pre, data = pp.hdl)
+summary(pp.hdl.lm.co)
+
+pp.hdl.lm.co.pre <- lm(change.hdl.pp ~ group + Pre, data = pp.hdl)
+summary(pp.hdl.lm.co.pre)
+
+pp.hdl.lm.co.sex <- lm(change.hdl.pp ~ group + sex + Pre, data = pp.hdl)
+summary(pp.hdl.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.pp.hdl <- pp.hdl %>%
+  summarise(mean.hdl.pp = mean(change.hdl.pp),
+            sd.hdl.pp = sd(change.hdl.pp)) %>%
+  print()
+
+figur.hdl.pp <- mean.pp.hdl %>%
+  ggplot(aes(group, mean.hdl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.pp - sd.hdl.pp, ymax = mean.hdl.pp + sd.hdl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.hdl, aes(group, change.hdl.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i HDL-kolesterol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
+
+figur.hdl.pp
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 2 treningsøkter per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+ppm.hdl <- Resultatskjema %>%
+  select(id, group, sex, time, `s-hdl`) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  # filtrerer ut irrelevante datapunkter
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-hdl`) %>%
+  mutate(change.hdl.ppm = Post - Pre) %>%
+  mutate(change.hdl.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(ppm.hdl, aes(sample = change.hdl.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+ppm.hdl.lm <- lm(change.hdl.ppm ~ group, data = ppm.hdl)
+summary(ppm.hdl.lm)
+
+# sjekker for kovariat
+ppm.hdl.lm.co <- lm(change.hdl.ppm ~ group + sex + Pre, data = ppm.hdl)
+summary(ppm.hdl.lm.co)
+
+ppm.hdl.lm.co.pre <- lm(change.hdl.ppm ~ group + Pre, data = ppm.hdl)
+summary(ppm.hdl.lm.co.pre)
+
+ppm.hdl.lm.co.sex <- lm(change.hdl.ppm ~ group + sex + Pre, data = ppm.hdl)
+summary(ppm.hdl.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.ppm.hdl <- ppm.hdl %>%
+  summarise(mean.hdl.ppm = mean(change.hdl.ppm),
+            sd.hdl.ppm = sd(change.hdl.ppm)) %>%
+  print()
+
+figur.hdl.ppm <- mean.ppm.hdl %>%
+  ggplot(aes(group, mean.hdl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.ppm - sd.hdl.ppm, ymax = mean.hdl.ppm + sd.hdl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.hdl, aes(group, change.hdl.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i HDL-koleserol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
+
+figur.hdl.ppm
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+
+# analyse intention to treat HDL
+itt.ldl <- Resultatskjema.ITT %>%
+  select(id, group, sex, time, `s-ldl`) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-ldl`) %>%
+  mutate(change.ldl.itt = Post - Pre) %>%
+  mutate(change.ldl.itt.pros = ((Post - Pre) / Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(itt.ldl, aes(sample = change.ldl.itt)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+itt.ldl.lm <- lm(change.ldl.itt ~ group, data = itt.ldl)
+summary(itt.ldl.lm)
+
+# sjekker for kovariat
+itt.ldl.lm.co. <- lm(change.ldl.itt ~ group + sex + Pre, data = itt.ldl)
+summary(itt.ldl.lm.co.)
+
+itt.ldl.lm.co.pre <- lm(change.ldl.itt ~ group + Pre, data = itt.ldl)
+summary(itt.ldl.lm.co.pre)
+
+itt.ldl.lm.co.sex <- lm(change.ldl.itt ~ group + sex, data = itt.ldl)
+summary(itt.ldl.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av endring for bruk i graf
+mean.itt.ldl <- itt.ldl %>%
+  drop_na() %>%
+  summarise(mean.ldl = mean(change.ldl.itt),
+            sd.ldl = sd(change.ldl.itt)) %>%
+  print()
+
+# lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
+dropout.itt.ldl <- itt.ldl %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  drop_na() %>%
+  print()
+
+# lager graf
+figur.ldl.itt <- mean.itt.ldl %>%
+  ggplot(aes(group, mean.ldl, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl - sd.ldl, ymax = mean.ldl + sd.ldl), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.ldl, aes(group, change.ldl.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i LDL-kolesterol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
+
+figur.ldl.itt
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 1 treningsøkt per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+pp.ldl <- Resultatskjema %>%
+  select(id, group, sex, time, `s-ldl`) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-ldl`) %>%
+  mutate(change.ldl.pp = Post - Pre) %>%
+  mutate(change.ldl.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(pp.ldl, aes(sample = change.ldl.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+pp.ldl.lm <- lm(change.ldl.pp ~ group, data = pp.ldl)
+summary(pp.ldl.lm)
+
+# sjekker for kovariat
+pp.ldl.lm.co <- lm(change.ldl.pp ~ group + sex + Pre, data = pp.ldl)
+summary(pp.ldl.lm.co)
+
+pp.ldl.lm.co.pre <- lm(change.ldl.pp ~ group + Pre, data = pp.ldl)
+summary(pp.ldl.lm.co.pre)
+
+pp.ldl.lm.co.sex <- lm(change.ldl.pp ~ group + sex + Pre, data = pp.ldl)
+summary(pp.ldl.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.pp.ldl <- pp.ldl %>%
+  summarise(mean.ldl.pp = mean(change.ldl.pp),
+            sd.ldl.pp = sd(change.ldl.pp)) %>%
+  print()
+
+figur.ldl.pp <- mean.pp.ldl %>%
+  ggplot(aes(group, mean.ldl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.pp - sd.ldl.pp, ymax = mean.ldl.pp + sd.ldl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.ldl, aes(group, change.ldl.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i LDL-kolesterol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
+
+figur.ldl.pp
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 2 treningsøkter per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+ppm.ldl <- Resultatskjema %>%
+  select(id, group, sex, time, `s-ldl`) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  # filtrerer ut irrelevante datapunkter
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-ldl`) %>%
+  mutate(change.ldl.ppm = Post - Pre) %>%
+  mutate(change.ldl.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(ppm.ldl, aes(sample = change.ldl.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+ppm.ldl.lm <- lm(change.ldl.ppm ~ group, data = ppm.ldl)
+summary(ppm.ldl.lm)
+
+# sjekker for kovariat
+ppm.ldl.lm.co <- lm(change.ldl.ppm ~ group + sex + Pre, data = ppm.ldl)
+summary(ppm.ldl.lm.co)
+
+ppm.ldl.lm.co.pre <- lm(change.ldl.ppm ~ group + Pre, data = ppm.ldl)
+summary(ppm.ldl.lm.co.pre)
+
+ppm.ldl.lm.co.sex <- lm(change.ldl.ppm ~ group + sex + Pre, data = ppm.ldl)
+summary(ppm.ldl.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.ppm.ldl <- ppm.ldl %>%
+  summarise(mean.ldl.ppm = mean(change.ldl.ppm),
+            sd.ldl.ppm = sd(change.ldl.ppm)) %>%
+  print()
+
+figur.ldl.ppm <- mean.ppm.ldl %>%
+  ggplot(aes(group, mean.ldl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.ppm - sd.ldl.ppm, ymax = mean.ldl.ppm + sd.ldl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.ldl, aes(group, change.ldl.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i LDL-koleserol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
+
+figur.ldl.ppm
+```
+```{r}
+library(cowplot)
+plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, labels = c('A', 'B', 'C'))
+```
+

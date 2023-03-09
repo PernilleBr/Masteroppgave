@@ -1,0 +1,187 @@
+---
+title: "Glukose"
+author: "Pernille Breili"
+date: "2023-03-09"
+output: html_document
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+
+# analyse intention to treat TG
+itt.gluk <- Resultatskjema.ITT %>%
+  select(id, group, sex, time, `s-glukose`) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-glukose`) %>%
+  mutate(change.gluk.itt = Post - Pre) %>%
+  mutate(change.gluk.itt.pros = ((Post - Pre) / Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(itt.gluk, aes(sample = change.gluk.itt)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+itt.gluk.lm <- lm(change.gluk.itt ~ group, data = itt.gluk)
+summary(itt.gluk.lm)
+
+# sjekker for kovariat
+itt.gluk.lm.co. <- lm(change.gluk.itt ~ group + sex + Pre, data = itt.gluk)
+summary(itt.gluk.lm.co.)
+
+itt.gluk.lm.co.pre <- lm(change.gluk.itt ~ group + Pre, data = itt.gluk)
+summary(itt.gluk.lm.co.pre)
+
+itt.gluk.lm.co.sex <- lm(change.gluk.itt ~ group + sex, data = itt.gluk)
+summary(itt.gluk.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av endring for bruk i graf
+mean.itt.gluk <- itt.gluk %>%
+  drop_na() %>%
+  summarise(mean.gluk = mean(change.gluk.itt),
+            sd.gluk = sd(change.gluk.itt)) %>%
+  print()
+
+# lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
+dropout.itt.gluk <- itt.gluk %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  drop_na() %>%
+  print()
+
+# lager graf
+figur.gluk.itt <- mean.itt.gluk %>%
+  ggplot(aes(group, mean.gluk, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk - sd.gluk, ymax = mean.gluk + sd.gluk), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.gluk, aes(group, change.gluk.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i glukose (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1)
+
+figur.gluk.itt
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 1 treningsøkt per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+pp.gluk <- Resultatskjema %>%
+  select(id, sex, group, time, `s-glukose`) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-glukose`) %>%
+  mutate(change.gluk.pp = Post - Pre) %>%
+  mutate(change.gluk.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(pp.gluk, aes(sample = change.gluk.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+pp.gluk.lm <- lm(change.gluk.pp ~ group, data = pp.gluk)
+summary(pp.gluk.lm)
+
+# sjekker for kovariat
+pp.gluk.lm.co <- lm(change.gluk.pp ~ group + sex + Pre, data = pp.gluk)
+summary(pp.gluk.lm.co)
+
+pp.gluk.lm.co.pre <- lm(change.gluk.pp ~ group + Pre, data = pp.gluk)
+summary(pp.gluk.lm.co.pre)
+
+pp.gluk.lm.co.sex <- lm(change.gluk.pp ~ group + sex + Pre, data = pp.gluk)
+summary(pp.gluk.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.pp.gluk <- pp.gluk %>%
+  summarise(mean.gluk.pp = mean(change.gluk.pp),
+            sd.gluk.pp = sd(change.gluk.pp)) %>%
+  print()
+
+figur.gluk.pp <- mean.pp.gluk %>%
+  ggplot(aes(group, mean.gluk.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.pp - sd.gluk.pp, ymax = mean.gluk.pp + sd.gluk.pp), width = 0.1) + theme_classic() + geom_point(data = pp.gluk, aes(group, change.gluk.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i glukose (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1)
+
+figur.gluk.pp
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# analyse per protocl 2 treningsøkter per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+ppm.gluk <- Resultatskjema %>%
+  select(id, sex, group, time, `s-glukose`) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  # filtrerer ut irrelevante datapunkter
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 012") %>%
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = `s-glukose`) %>%
+  mutate(change.gluk.ppm = Post - Pre) %>%
+  mutate(change.gluk.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(ppm.gluk, aes(sample = change.gluk.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+ppm.gluk.lm <- lm(change.gluk.ppm ~ group, data = ppm.gluk)
+summary(ppm.gluk.lm)
+
+# sjekker for kovariat
+ppm.gluk.lm.co <- lm(change.gluk.ppm ~ group + sex + Pre, data = ppm.gluk)
+summary(ppm.gluk.lm.co)
+
+ppm.gluk.lm.co.pre <- lm(change.gluk.ppm ~ group + Pre, data = ppm.gluk)
+summary(ppm.gluk.lm.co.pre)
+
+ppm.gluk.lm.co.sex <- lm(change.gluk.ppm ~ group + sex + Pre, data = ppm.gluk)
+summary(ppm.gluk.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.ppm.gluk <- ppm.gluk %>%
+  summarise(mean.gluk.ppm = mean(change.gluk.ppm),
+            sd.gluk.ppm = sd(change.gluk.ppm)) %>%
+  print()
+
+figur.gluk.ppm <- mean.ppm.gluk %>%
+  ggplot(aes(group, mean.gluk.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.ppm - sd.gluk.ppm, ymax = mean.gluk.ppm + sd.gluk.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.gluk, aes(group, change.gluk.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i glukose (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1)
+
+figur.gluk.ppm
+```
+
