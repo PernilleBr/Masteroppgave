@@ -1,0 +1,229 @@
+---
+title: "Baselinekarakteristika_1"
+author: "Pernille Breili"
+date: "2023-03-10"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#slår sammen tabeller i en for å få med og uten kjønn
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+
+# uavnhengig av kjønn
+table2 <- Resultatskjema %>%
+  # velger relevante variabler
+  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
+  # filtrerer verdier fra pretest
+  filter(time == "pre") %>%
+  # grupperer etter gruppe og kjønn
+  group_by(group) %>%
+  # lager en ny variabler som teller antall i grupperte variabler
+  mutate(n = n()) %>%
+  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
+  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
+  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
+  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
+  mutate(rm = as.numeric(`1rm_newton`, na.rm = TRUE)) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  # endrer verdier fra gram til kg
+  mutate(total_mass_kg = total_mass / 1000) %>%
+  mutate(lean_mass_kg = lean_mass / 1000) %>%
+  mutate(fat_mass_kg = fat_mass / 1000) %>%
+  select(-total_mass, -fat_mass, -lean_mass, -vo2max_ml_min_kg_6x5, -`1rm_newton`) %>%
+  # forlenger tabellen slik at gjennomsnittsverdier er mulig å regne ut
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = age:fat_mass_kg) %>%
+  # legger til gruppering av "variable"
+  group_by(variable, group) %>%
+  # gjennomsnittsverdier og sd
+  summarise(m = mean(value, na.rm = TRUE),
+            s = sd(value, na.rm = TRUE)) %>%
+  # formatterer data slik at det ser fint ut
+  mutate(ms = if_else(variable == "n",
+                      as.character(m),
+                        paste0(signif(m, 3),
+                      " (",
+                       signif(s, 3),
+                     ")"))) %>%
+  ungroup() %>%
+  select(-m, -s) %>%
+  # endrer tabellen slik at gruppene, kontroll og intervensjon, danner en rad
+  # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass_kg", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "vo2max_ml_min_kg", "wc", "vat_mass", "handgrip", "rm"),
+                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+  pivot_wider(names_from = group,
+              values_from = ms) %>%
+  select(variable, kon, fls) %>%
+  arrange(variable) %>%
+  print()
+
+# fordelt på kjønn
+table1 <- Resultatskjema %>%
+  # velger relevante variabler
+  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
+  # filtrerer verdier fra pretest
+  filter(time == "pre") %>%
+  # grupperer etter gruppe og kjønn
+  group_by(group, sex) %>%
+  # lager en ny variabler som teller antall i grupperte variabler
+  mutate(n = n()) %>%
+  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
+  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
+  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
+  mutate(rm = as.numeric(`1rm_newton`, na.rm = TRUE)) %>%
+  # endrer verdier fra gram til kg
+  mutate(total_mass_kg = total_mass / 1000) %>%
+  mutate(lean_mass_kg = lean_mass / 1000) %>%
+  mutate(fat_mass_kg = fat_mass / 1000) %>%
+  select(-total_mass, -fat_mass, -lean_mass, -vo2max_ml_min_kg_6x5, -`1rm_newton`) %>%
+  
+  # forlenger tabellen slik at gjennomsnittsverdier er mulig å regne ut
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = age:fat_mass_kg) %>%
+  # legger til gruppering av "variable"
+  group_by(group, sex, variable) %>%
+  # gjennomsnittsverdier og sd
+  summarise(m = mean(value, na.rm = TRUE),
+            s = sd(value, na.rm = TRUE)) %>%
+  # formatterer data slik at det ser fint ut
+  mutate(ms = if_else(variable == "n",
+                      as.character(m),
+                        paste0(format(round(m, 1)),
+                      " (",
+                      format(round(s, 1)),
+                      ")")),
+         # setter sammen gruppe og kjønn til en variabel
+         group_sex = paste(group, sex, sep = "_")) %>%
+  ungroup() %>%
+  select(-group, -sex, -m, -s) %>%
+  # endrer tabellen slik at gruppene, kontroll og intervensjon, danner en rad
+  pivot_wider(names_from = group_sex,
+              values_from = ms) %>%
+  # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass_kg", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "vo2max_ml_min_kg", "wc", "vat_mass", "handgrip", "rm"),
+                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+  select(variable, kon_1, kon_2, fls_1, fls_2) %>%
+  arrange(variable) %>%
+  print()
+
+# slår sammen tabellene til en
+table.baselinechar <- inner_join(x = table2, y = table1) %>%
+  select(variable, fls, kon, fls_1, kon_1, fls_2, kon_2) %>%
+  flextable() %>%
+  set_header_labels(variable = "",
+                    fls = "Intervensjon",
+                    kon = "Kontroll",
+                    fls_1 = "Intervensjon",
+                    kon_1 = "Kontroll",
+                    fls_2 = "Intervensjon",
+                    kon_2 = "Kontroll") %>%
+  add_header_row(values = c("", "Begge kjønn", "Begge kjønn", "Kvinner", "Kvinner", "Menn", "Menn")) %>%
+  # samler gruppene i en rad
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+  merge_at(part = "header", i = 1, j = 4:5) %>%
+  merge_at(part = "header", i = 1, j = 6:7) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD)", colwidths = 7) %>%
+  fontsize(size = 11) %>%
+  fontsize(size = 11, part = "header") %>%
+  align(align = "center", part = "header") %>%
+  # lar kolonnene tilpasses etter innholdet 
+  autofit() %>%
+  print()
+
+# slår sammen tabellene til en
+table.baselinechar2 <- inner_join(x = table2, y = table1) %>%
+  select(variable, fls, kon, fls_1, kon_1, fls_2, kon_2) %>%
+  print()
+
+# henter tabell for p-verdier 
+p.value.pre <- read_excel("p.value.diff.pre.xlsx")
+
+table.p.value.pre <- p.value.pre %>%
+  select(variable, p.value, p.value.w, p.value.m) %>%
+  filter(variable != "glukose") %>%
+  filter(variable != "triglyserider") %>%  
+  filter(variable != "hdl") %>%
+  filter(variable != "ldl") %>%
+  filter(variable != "pwv") %>%
+  mutate(variable = factor(variable, levels = c("age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "vo2max", "wc", "vat", "handgrip", "rm"),
+                           labels = c("Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+  mutate(p.value = ifelse(p.value < 0.05,
+                           paste0(signif(p.value, 2), "*"),
+                           ifelse(p.value < 0.1,
+                                   paste0(format(round(p.value, 3)), "."),
+                                  (paste(format(round(p.value, 3))))))) %>%
+  mutate(p.value.w = ifelse(p.value.w < 0.05,
+                           paste0(signif(p.value.w, 2), "*"),
+                           ifelse(p.value.w < 0.1,
+                                   paste0(format(round(p.value.w, 3)), "."),
+                                  (paste(format(round(p.value.w, 3))))))) %>%
+  mutate(p.value.m = ifelse(p.value.m < 0.05,
+                           paste0(signif(p.value.m, 2), "*"),
+                           ifelse(p.value.m < 0.1,
+                                   paste0(format(round(p.value.m, 3)), "."),
+                                  (paste(format(round(p.value.m, 3))))))) %>%
+  print()
+
+table.baselinechar00 <- inner_join(x = table.baselinechar2, y = table.p.value.pre) %>%
+  select(variable, fls, kon, p.value, fls_1, kon_1, p.value.w, fls_2, kon_2, p.value.m) %>%
+  flextable() %>%
+  set_header_labels(variable = "",
+                    fls = "Intervensjon",
+                    kon = "Kontroll",
+                    p.value = "P-verdi",
+                    fls_1 = "Intervensjon",
+                    kon_1 = "Kontroll",
+                    p.value.w = "P-verdi",
+                    fls_2 = "Intervensjon",
+                    kon_2 = "Kontroll",
+                    p.value.m = "P-verdi") %>%
+  add_header_row(values = c("", "Begge kjønn", "Begge kjønn", "Begge kjønn", "Kvinner", "Kvinner", "Kvinner", "Menn", "Menn", "Menn")) %>%
+  # samler gruppene i en rad
+  merge_at(part = "header", i = 1, j = 2:4) %>%
+  merge_at(part = "header", i = 1, j = 5:7) %>%
+  merge_at(part = "header", i = 1, j = 8:10) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 10) %>%
+  fontsize(size = 11) %>%
+  fontsize(size = 11, part = "header") %>%
+  align(align = "center", part = "header") %>%
+  # lar kolonnene tilpasses etter innholdet 
+  autofit() %>%
+  print()
+
+# Forsøker å lage en tabell med N
+table.baselinechar001 <- merge(data.frame(table.baselinechar2, row.names = NULL), data.frame(table.p.value.pre, row.names = NULL), by = 0, all = TRUE) [-1] %>%
+  select(variable.x, fls, kon, p.value, fls_1, kon_1, p.value.w, fls_2, kon_2, p.value.m) %>%
+  arrange(variable.x) %>%
+  flextable() %>%
+  set_header_labels(variable.x = "",
+                    fls = "Intervensjon",
+                    kon = "Kontroll",
+                    p.value = "P-verdi",
+                    fls_1 = "Intervensjon",
+                    kon_1 = "Kontroll",
+                    p.value.w = "P-verdi",
+                    fls_2 = "Intervensjon",
+                    kon_2 = "Kontroll",
+                    p.value.m = "P-verdi") %>%
+  add_header_row(values = c("", "Begge kjønn", "Begge kjønn", "Begge kjønn", "Kvinner", "Kvinner", "Kvinner", "Menn", "Menn", "Menn")) %>%
+  # samler gruppene i en rad
+  merge_at(part = "header", i = 1, j = 2:4) %>%
+  merge_at(part = "header", i = 1, j = 5:7) %>%
+  merge_at(part = "header", i = 1, j = 8:10) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 10) %>%
+  fontsize(size = 11) %>%
+  fontsize(size = 11, part = "header") %>%
+  align(align = "center", part = "header") %>%
+  # lar kolonnene tilpasses etter innholdet 
+  autofit() %>%
+  print()
+```
+
+

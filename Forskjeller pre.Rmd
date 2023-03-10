@@ -3,15 +3,18 @@ title: "Forskjeller pre"
 author: "Pernille Breili"
 date: "2023-03-03"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
+view(Resultatskjema)
 
 pre.diff <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv) %>% 
+  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`) %>% 
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
   # grupperer etter gruppe 
@@ -27,6 +30,7 @@ pre.diff <- Resultatskjema %>%
   mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
   mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
   mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  mutate(strength_leg = as.numeric(`1rm_newton`, na.rm = TRUE)) %>%
   drop_na() %>%
   print()
 
@@ -208,4 +212,235 @@ ggplot(pre.diff, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
 lm.pwv.co <- lm(pwv ~ group + sex, data = pre.diff)
 summary(lm.pwv.co)
 
+ggplot(pre.diff, aes(sample = strength_leg)) + stat_qq() + stat_qq_line(col = "red")
+lm.strength_leg <- lm(strength_leg ~ group, data = pre.diff)
+summary(lm.strength_leg)
+
+lm.strength_leg.co <- lm(strength_leg ~ group + sex, data = pre.diff)
+summary(lm.strength_leg.co)
+
+
+# sjekker p.verdi mellom kvinner i pre-verdier
+pre.diff.women <- Resultatskjema %>%
+  # velger relevante variabler
+  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`) %>% 
+  # filtrerer verdier fra pretest
+  filter(time == "pre") %>%
+  filter(sex == "1") %>%
+  # grupperer etter gruppe 
+  group_by(group) %>%
+  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
+  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
+  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
+  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(vat_volume = as.numeric(vat_volume, na.rm = TRUE)) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  mutate(strength_leg = as.numeric(`1rm_newton`, na.rm = TRUE)) %>%
+  drop_na() %>%
+  print()
+
+ggplot(pre.diff.women, aes(sample = age)) + stat_qq() + stat_qq_line(col = "red")
+lm.age.w <- lm(age ~ group, data = pre.diff.women)
+summary(lm.age.w)
+
+ggplot(pre.diff.women, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
+lm.height.w <- lm(height ~ group, data = pre.diff.women)
+summary(lm.height.w)
+
+ggplot(pre.diff.women, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.mass.w <- lm(total_mass ~ group, data = pre.diff.women)
+summary(lm.mass.w)
+
+ggplot(pre.diff.women, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
+lm.bmi.w <- lm(bmi ~ group, data = pre.diff.women)
+summary(lm.bmi.w)
+
+
+ggplot(pre.diff.women, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.fat.w <- lm(fat_mass ~ group, data = pre.diff.women)
+summary(lm.fat.w)
+
+ggplot(pre.diff.women, aes(sample = lean_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.lean.w <- lm(lean_mass ~ group, data = pre.diff.women)
+summary(lm.lean.w)
+
+ggplot(pre.diff.women, aes(sample = sys)) + stat_qq() + stat_qq_line(col = "red")
+lm.sys.w <- lm(sys ~ group, data = pre.diff.women)
+summary(lm.sys.w)
+
+ggplot(pre.diff.women, aes(sample = dia)) + stat_qq() + stat_qq_line(col = "red")
+lm.dia.w <- lm(dia ~ group, data = pre.diff.women)
+summary(lm.dia.w)
+
+ggplot(pre.diff.women, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
+lm.wc.w <- lm(wc ~ group, data = pre.diff.women)
+summary(lm.wc.w)
+
+ggplot(pre.diff.women, aes(sample = handgrip)) + stat_qq() + stat_qq_line(col = "red")
+lm.hg.w <- lm(handgrip ~ group, data = pre.diff.women)
+summary(lm.hg.w)
+
+ggplot(pre.diff.women, aes(sample = vo2max_ml_min_kg)) + stat_qq() + stat_qq_line(col = "red")
+lm.vo2.w <- lm(vo2max_ml_min_kg ~ group, data = pre.diff.women)
+summary(lm.vo2.w)
+
+ggplot(pre.diff.women, aes(sample = vat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.vat.w <- lm(vat_mass ~ group, data = pre.diff.women)
+summary(lm.vat.w)
+
+ggplot(pre.diff.women, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
+lm.gluk.w <- lm(`s-glukose` ~ group, data = pre.diff.women)
+summary(lm.gluk.w)
+
+ggplot(pre.diff.women, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
+lm.trigl.w <- lm(`s-triglyserider` ~ group, data = pre.diff.women)
+summary(lm.trigl.w)
+
+ggplot(pre.diff.women, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.hdl.w <- lm(`s-hdl` ~ group, data = pre.diff.women)
+summary(lm.hdl.w)
+
+ggplot(pre.diff.women, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.ldl.w <- lm(`s-ldl` ~ group, data = pre.diff.women)
+summary(lm.ldl.w)
+
+ggplot(pre.diff.women, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
+lm.pwv.w <- lm(pwv ~ group, data = pre.diff.women)
+summary(lm.pwv.w)
+
+ggplot(pre.diff.women, aes(sample = strength_leg)) + stat_qq() + stat_qq_line(col = "red")
+lm.strength_leg.w <- lm(strength_leg ~ group, data = pre.diff.women)
+summary(lm.strength_leg.w)
+
+
+# sjekker p.verdi mellom kvinner i pre-verdier
+pre.diff.men <- Resultatskjema %>%
+  # velger relevante variabler
+  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`) %>% 
+  # filtrerer verdier fra pretest
+  filter(time == "pre") %>%
+  filter(sex == "2") %>%
+  # grupperer etter gruppe 
+  group_by(group) %>%
+  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
+  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
+  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
+  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(vat_volume = as.numeric(vat_volume, na.rm = TRUE)) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  mutate(strength_leg = as.numeric(`1rm_newton`, na.rm = TRUE)) %>%
+  drop_na() %>%
+  print()
+
+ggplot(pre.diff.men, aes(sample = age)) + stat_qq() + stat_qq_line(col = "red")
+lm.age.m <- lm(age ~ group, data = pre.diff.men)
+summary(lm.age.m)
+
+ggplot(pre.diff.men, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
+lm.height.m <- lm(height ~ group, data = pre.diff.men)
+summary(lm.height.m)
+
+# filtrerer ut ekstremverdi
+pre.diff.men.eks <- pre.diff.men %>%
+  filter(id != "tr031 004")
+
+ggplot(pre.diff.men, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.mass.m <- lm(total_mass ~ group, data = pre.diff.men)
+summary(lm.mass.m)
+
+ggplot(pre.diff.men.eks, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.mass.m2 <- lm(total_mass ~ group, data = pre.diff.men.eks)
+summary(lm.mass.m2)
+
+ggplot(pre.diff.men, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
+lm.bmi.m <- lm(bmi ~ group, data = pre.diff.men)
+summary(lm.bmi.m)
+
+ggplot(pre.diff.men.eks, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
+lm.bmi.m2 <- lm(bmi ~ group, data = pre.diff.men.eks)
+summary(lm.bmi.m2)
+
+ggplot(pre.diff.men, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.fat.m <- lm(fat_mass ~ group, data = pre.diff.men)
+summary(lm.fat.m)
+
+ggplot(pre.diff.men.eks, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.fat.m2 <- lm(fat_mass ~ group, data = pre.diff.men.eks)
+summary(lm.fat.m2)
+
+ggplot(pre.diff.men, aes(sample = lean_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.lean.m <- lm(lean_mass ~ group, data = pre.diff.men)
+summary(lm.lean.m)
+
+ggplot(pre.diff.men, aes(sample = sys)) + stat_qq() + stat_qq_line(col = "red")
+lm.sys.m <- lm(sys ~ group, data = pre.diff.men)
+summary(lm.sys.m)
+
+ggplot(pre.diff.men, aes(sample = dia)) + stat_qq() + stat_qq_line(col = "red")
+lm.dia.m <- lm(dia ~ group, data = pre.diff.men)
+summary(lm.dia.m)
+
+ggplot(pre.diff.men, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
+lm.wc.m <- lm(wc ~ group, data = pre.diff.men)
+summary(lm.wc.m)
+
+# sjekker uten ekstremverdi
+
+ggplot(pre.diff.men.eks, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
+lm.wc.m2 <- lm(wc ~ group, data = pre.diff.men.eks)
+summary(lm.wc.m2)
+
+ggplot(pre.diff.men, aes(sample = handgrip)) + stat_qq() + stat_qq_line(col = "red")
+lm.hg.m <- lm(handgrip ~ group, data = pre.diff.men)
+summary(lm.hg.m)
+
+ggplot(pre.diff.men, aes(sample = vo2max_ml_min_kg)) + stat_qq() + stat_qq_line(col = "red")
+lm.vo2.m <- lm(vo2max_ml_min_kg ~ group, data = pre.diff.men)
+summary(lm.vo2.m)
+
+ggplot(pre.diff.men, aes(sample = vat_mass)) + stat_qq() + stat_qq_line(col = "red")
+lm.vat.m <- lm(vat_mass ~ group, data = pre.diff.men)
+summary(lm.vat.m)
+
+ggplot(pre.diff.men, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
+lm.gluk.m <- lm(`s-glukose` ~ group, data = pre.diff.men)
+summary(lm.gluk.m)
+
+# sjekker uten ekstremverdi
+pre.diff.men.eks2 <- pre.diff.men %>%
+  filter(id != "tr031 009")
+
+ggplot(pre.diff.men.eks2, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
+lm.gluk.m2 <- lm(`s-glukose` ~ group, data = pre.diff.men.eks2)
+summary(lm.gluk.m2)
+
+ggplot(pre.diff.men, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
+lm.trigl.m <- lm(`s-triglyserider` ~ group, data = pre.diff.men)
+summary(lm.trigl.m)
+
+ggplot(pre.diff.men, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.hdl.m <- lm(`s-hdl` ~ group, data = pre.diff.men)
+summary(lm.hdl.m)
+
+ggplot(pre.diff.men, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
+lm.ldl.m <- lm(`s-ldl` ~ group, data = pre.diff.men)
+summary(lm.ldl.m)
+
+ggplot(pre.diff.men, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
+lm.pwv.m <- lm(pwv ~ group, data = pre.diff.men)
+summary(lm.pwv.m)
+
+ggplot(pre.diff.men, aes(sample = strength_leg)) + stat_qq() + stat_qq_line(col = "red")
+lm.strength_leg.m <- lm(strength_leg ~ group, data = pre.diff.men)
+summary(lm.strength_leg.m)
 ```
