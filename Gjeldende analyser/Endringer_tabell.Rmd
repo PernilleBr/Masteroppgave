@@ -6,6 +6,71 @@ output: html_document
 ---
 
 ```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+Analyser.pvalue <- read_excel("Analyser_p.verdi.xlsx")
+
+# ordner data fra ITT
+gjsnitt.itt <- Resultatskjema.ITT %>%
+  select(id, group, time, sex, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
+  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
+  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
+  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
+  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
+  drop_na() %>%
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = vat_mass:pwv) %>%
+  group_by(group, time, variable) %>%
+  mutate(n = n()) %>%
+  summarise(m.itt = mean(value),
+         s.itt = sd(value)) %>%
+  mutate(ms.itt = if_else(variable == "n",
+                      as.character(m.itt),
+                        paste0(signif(m.itt, 3),
+                      " (",signif(s.itt, 3),
+                     ")")),
+         group_time = paste(group, time, sep = "_")) %>%
+  ungroup() %>%
+  select(-m.itt, -s.itt, -group, -time) %>%
+  pivot_wider(names_from = group_time,
+              values_from = ms.itt) %>%
+  mutate(variable = factor(variable, levels = c("vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
+                           labels = c("Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
+  select(variable, fls_pre, fls_post, kon_pre, kon_post) %>%
+  arrange(variable) %>%
+  print()
+
+itt.p <- Analyser.pvalue %>%
+  select(p.itt) %>%
+  drop_na() %>%
+  mutate(p.itt = ifelse(p.itt < 0.05,
+                           paste0(signif(p.itt, 2), "*"),
+                           ifelse(p.itt < 0.1,
+                                   paste0(format(round(p.itt, 3)), "."),
+                                  (paste(format(round(p.itt, 3))))))) %>%
+  print()
+
+table.itt <- cbind(gjsnitt.itt, itt.p) %>%
+  flextable() %>%
+  set_header_labels(variable = "",
+                    fls_pre = "Pre",
+                    fls_post = "Post",
+                    kon_pre = "Pre",
+                    kon_post = "Post",
+                    p.itt = "P-verdi") %>%
+  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+  merge_at(part = "header", i = 1, j = 4:5) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 6) %>%
+  fontsize(size = 11) %>%
+  fontsize(size = 11, part = "header") %>%
+  align(align = "center", part = "header") %>%
+  autofit() %>%
+  print()
 
 ```
 
