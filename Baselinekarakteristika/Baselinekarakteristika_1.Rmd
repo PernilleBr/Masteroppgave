@@ -46,8 +46,7 @@ table2 <- Resultatskjema %>%
   mutate(ms = if_else(variable == "n",
                       as.character(m),
                         paste0(signif(m, 3),
-                      " (",
-                       signif(s, 3),
+                      " (",signif(s, 3),
                      ")"))) %>%
   ungroup() %>%
   select(-m, -s) %>%
@@ -95,10 +94,9 @@ table1 <- Resultatskjema %>%
   # formatterer data slik at det ser fint ut
   mutate(ms = if_else(variable == "n",
                       as.character(m),
-                        paste0(format(round(m, 1)),
-                      " (",
-                      format(round(s, 1)),
-                      ")")),
+                      paste0(signif(m, 3),
+                      " (",signif(s, 3),
+                     ")")), 
          # setter sammen gruppe og kjønn til en variabel
          group_sex = paste(group, sex, sep = "_")) %>%
   ungroup() %>%
@@ -152,8 +150,8 @@ table.p.value.pre <- p.value.pre %>%
   filter(variable != "hdl") %>%
   filter(variable != "ldl") %>%
   filter(variable != "pwv") %>%
-  mutate(variable = factor(variable, levels = c("age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "vo2max", "wc", "vat", "handgrip", "rm"),
-                           labels = c("Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "vo2max", "wc", "vat", "handgrip", "rm"),
+                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   mutate(p.value = ifelse(p.value < 0.05,
                            paste0(signif(p.value, 2), "*"),
                            ifelse(p.value < 0.1,
