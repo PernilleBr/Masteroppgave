@@ -36,15 +36,59 @@ ggplot(pp.vat.stat, aes(sample = change)) + stat_qq() + stat_qq_line(col = "red"
 pp.vat.lm <- lm(change ~ group, data = pp.vat.stat)
 summary(pp.vat.lm)
 
+pp.vat.lm.co <- lm(change ~ group + sex, data = pp.vat.stat)
+summary(pp.vat.lm.co)
+
+pp.vat.lm.co2 <- lm(change ~ group + sex + Pre, data = pp.vat.stat)
+summary(pp.vat.lm.co2)
+
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.pp.vat <- pp.vat.stat %>%
-  summarise(mean.vat.pros = mean(change.pros),
-            sd.vat.pros = sd(change.pros)) %>%
+  summarise(mean.vat.change = mean(change),
+            sd.vat.change = sd(change)) %>%
   print()
 
-# lager graf for gjennomsnittsscore i prosent med individuelle endringer
+# lager graf for gjennomsnittsscore i prosent med individuelle endringer (JOBB MER MED DENNE)
 mean.pp.vat %>%
-  ggplot(aes(group, mean.vat.pros, group = group)) + geom_point(size = 3, aes(group = group)) + geom_point(data = pp.vat.stat, aes(group, change.pros, group = id), position = position_dodge(width = 0.2), size = 2, alpha = 0.4) + geom_errorbar(aes(ymin = mean.vat.pros - sd.vat.pros, ymax = mean.vat.pros + sd.vat.pros), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Visceralt fett (% endring)")
+  ggplot(aes(group, mean.vat.change, group = group)) + geom_boxplot(width = 0.3, aes(group = group)) + geom_point(data = pp.vat.stat, aes(group, change, group = id), size = 2, alpha = 0.5) + geom_errorbar(aes(ymin = mean.vat.change - sd.vat.change, ymax = mean.vat.change + sd.vat.change), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Endring i visceralt fett (g)") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 11), axis.text.y = element_text(size = 11)) #theme(aspect.ratio = 2/1)
+
+
+mean.pp.vat %>%
+  ggplot(aes(group, mean.vat.change, group = group)) + geom_boxplot(width = 0.1, aes(group = group)) + geom_errorbar(aes(ymin = mean.vat.change - sd.vat.change, ymax = mean.vat.change + sd.vat.change), position = position_dodge(width = 0.2), width = 0.05) + theme_classic() + labs(x = "Gruppe", y = "Endring i visceralt fett (g)") + theme(axis.title = element_text(size = 11))
+
+
+pp.vat.stat2 <- Resultatskjema %>%
+  select(id, sex, group, time, vat_mass) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post"))) %>%
+  group_by(group, time) %>%
+  drop_na() %>%
+  summarise(m = mean(vat_mass),
+            s = sd(vat_mass)) %>%
+  print()
+
+pp.vat.stat.ind <- Resultatskjema %>%
+  select(id, sex, group, time, vat_mass) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  mutate(time = factor(time, levels = c("pre", "post"))) %>%
+  group_by(group, time) %>%
+  drop_na() %>%
+  print()
+
+pp.vat.stat2 %>%
+  ggplot(aes(x = interaction(time, group), y = m, group = group)) + geom_col(width = 0.5, fill = "white", colour = "black") + geom_line(data = pp.vat.stat.ind, aes(x = interaction(time, group), y = vat_mass, group = id), alpha = 0.4) + geom_point(data = pp.vat.stat.ind, aes(x = interaction(time, group), y = vat_mass, group = id), alpha = 0.4) + theme_classic() + scale_y_continuous(expand = c(0,0)) + geom_errorbar(aes(ymin = m - s, ymax = m + s), width = 0.1)
+
+
+pp.vat.stat2 %>%
+  ggplot(aes(x = interaction(time, group), y = m, group = group)) + geom_col(width = 0.5, fill = "white", colour = "black") + theme_classic() + scale_y_continuous(expand = c(0,0)) + geom_errorbar(aes(ymin = m - s, ymax = m + s), width = 0.1)
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)

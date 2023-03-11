@@ -1,0 +1,11 @@
+---
+title: "Endringer_tabell"
+author: "Pernille Breili"
+date: "2023-03-11"
+output: html_document
+---
+
+```{r}
+
+```
+
