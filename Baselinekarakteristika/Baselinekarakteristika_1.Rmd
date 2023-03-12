@@ -4,7 +4,7 @@ author: "Pernille Breili"
 date: "2023-03-10"
 output: html_document
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r}
@@ -94,8 +94,8 @@ table1 <- Resultatskjema %>%
   # formatterer data slik at det ser fint ut
   mutate(ms = if_else(variable == "n",
                       as.character(m),
-                      paste0(signif(m, 3),
-                      " (",signif(s, 3),
+                      paste0(sprintf("%.2f", round(m, 2)),
+                      " (",sprintf("%.2f", round(s, 2)),
                      ")")), 
          # setter sammen gruppe og kjønn til en variabel
          group_sex = paste(group, sex, sep = "_")) %>%
@@ -138,6 +138,7 @@ table.baselinechar <- inner_join(x = table2, y = table1) %>%
 # slår sammen tabellene til en
 table.baselinechar2 <- inner_join(x = table2, y = table1) %>%
   select(variable, fls, kon, fls_1, kon_1, fls_2, kon_2) %>%
+  arrange(variable) %>%
   print()
 
 # henter tabell for p-verdier 
@@ -184,7 +185,7 @@ table.baselinechar00 <- inner_join(x = table.baselinechar2, y = table.p.value.pr
                     p.value.m = "P-verdi") %>%
   add_header_row(values = c("", "Begge kjønn", "Begge kjønn", "Begge kjønn", "Kvinner", "Kvinner", "Kvinner", "Menn", "Menn", "Menn")) %>%
   # samler gruppene i en rad
-  merge_at(part = "header", i = 1, j = 2:4) %>%
+  merge_at(part = "header", i = 1, j = 2:4) %>% 
   merge_at(part = "header", i = 1, j = 5:7) %>%
   merge_at(part = "header", i = 1, j = 8:10) %>%
   add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 10) %>%
