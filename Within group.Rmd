@@ -9,6 +9,7 @@ output: html_document
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(rstatix)
 Resultatskjema <- read_excel("Resultatskjema.xlsx")
 
+# ingn within-group forskjeller fra pre til post test
 data.within <- Resultatskjema %>%
   # velger relevante variabler
   select(id, group, time, sex, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv) %>%

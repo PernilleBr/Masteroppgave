@@ -113,8 +113,8 @@ summary(pp.pwv.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.pp.pwv <- pp.pwv %>%
-  summarise(mean.pwv.pp = mean(change.pwv.pp),
-            sd.pwv.pp = sd(change.pwv.pp)) %>%
+  summarise(mean.pwv.pp = mean(change.pwv.pp, na.rm = TRUE),
+            sd.pwv.pp = sd(change.pwv.pp, na.rm = TRUE)) %>%
   print()
 
 figur.pwv.pp <- mean.pp.pwv %>%
