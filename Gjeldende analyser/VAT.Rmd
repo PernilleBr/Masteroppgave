@@ -35,6 +35,9 @@ ggplot(itt.vat, aes(sample = change.vat.itt)) + stat_qq() + stat_qq_line(col = "
 itt.vat.lm <- lm(change.vat.itt ~ group, data = itt.vat)
 summary(itt.vat.lm)
 
+# cohens d
+cohensD(change.vat.itt ~ group, dat = itt.vat)
+
 # sjekker for kovariat
 itt.vat.lm.co. <- lm(change.vat.itt ~ group + sex + Pre, data = itt.vat)
 summary(itt.vat.lm.co.)
@@ -104,6 +107,9 @@ ggplot(pp.vat, aes(sample = change.vat.pp)) + stat_qq() + stat_qq_line(col = "re
 pp.vat.lm <- lm(change.vat.pp ~ group, data = pp.vat)
 summary(pp.vat.lm)
 
+# cohens d
+cohensD(change.vat.pp ~ group, dat = pp.vat)
+
 # sjekker for kovariat
 pp.vat.lm.co <- lm(change.vat.pp ~ group + sex + Pre, data = pp.vat)
 summary(pp.vat.lm.co)
@@ -165,6 +171,9 @@ ggplot(ppm.vat, aes(sample = change.vat.ppm)) + stat_qq() + stat_qq_line(col = "
 # analyse av endringsscore fra pre til post mellom gruppene
 ppm.vat.lm <- lm(change.vat.ppm ~ group, data = ppm.vat)
 summary(ppm.vat.lm)
+
+# cohens d
+cohensD(change.vat.ppm ~ group, dat = ppm.vat)
 
 # sjekker for kovariat
 ppm.vat.lm.co <- lm(change.vat.ppm ~ group + sex + Pre, data = ppm.vat)

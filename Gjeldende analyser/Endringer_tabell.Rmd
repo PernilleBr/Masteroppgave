@@ -3,6 +3,8 @@ title: "Endringer_tabell"
 author: "Pernille Breili"
 date: "2023-03-11"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
@@ -45,13 +47,14 @@ gjsnitt.itt <- Resultatskjema.ITT %>%
   print()
 
 itt.p <- Analyser.pvalue %>%
-  select(p.itt) %>%
+  select(p.itt, es.itt) %>%
   drop_na() %>%
   mutate(p.itt = ifelse(p.itt < 0.05,
                            paste0(signif(p.itt, 2), "*"),
                            ifelse(p.itt < 0.1,
                                    paste0(format(round(p.itt, 3)), "."),
                                   (paste(format(round(p.itt, 3))))))) %>%
+  mutate(es.itt = sprintf("%.2f", round(es.itt, 2))) %>%
   print()
 
 # ordner data fra per protocl 1 treningsøkt per uke
@@ -80,7 +83,6 @@ gjsnitt.pp <- Resultatskjema %>%
                cols = vat_mass:pwv) %>%
   group_by(group, time, variable) %>%
   mutate(n = n()) %>%
-  print()
   summarise(m.pp = mean(value, na.rm = TRUE),
          s.pp = sd(value, na.rm = TRUE)) %>%
   mutate(ms.pp = if_else(variable == "n",
@@ -101,13 +103,14 @@ gjsnitt.pp <- Resultatskjema %>%
 
 # p verdier fra pp 
 pp.p <- Analyser.pvalue %>%
-  select(p.pp) %>%
+  select(p.pp, es.pp) %>%
   drop_na() %>%
   mutate(p.pp = ifelse(p.pp < 0.05,
                            paste0(signif(p.pp, 2), "*"),
                            ifelse(p.pp < 0.1,
                                    paste0(format(round(p.pp, 3)), "."),
                                   (paste(format(round(p.pp, 3))))))) %>%
+  mutate(es.pp = sprintf("%.2f", round(es.pp, 2))) %>%
   print()
 
 gjsnitt.ppm <- Resultatskjema %>%
@@ -153,13 +156,14 @@ gjsnitt.ppm <- Resultatskjema %>%
   print()
 
 ppm.p <- Analyser.pvalue %>%
-  select(p.ppm) %>%
+  select(p.ppm, es.ppm) %>%
   drop_na() %>%
   mutate(p.ppm = ifelse(p.ppm < 0.05,
                            paste0(signif(p.ppm, 2), "*"),
                            ifelse(p.ppm < 0.1,
                                    paste0(format(round(p.ppm, 3)), "."),
                                   (paste(format(round(p.ppm, 3))))))) %>%
+  mutate(es.ppm = sprintf("%.2f", round(es.ppm, 2))) %>%
   print()
 
 table.itt <- cbind(gjsnitt.itt, itt.p) %>%
@@ -169,14 +173,16 @@ table.itt <- cbind(gjsnitt.itt, itt.p) %>%
                     fls_post = "Post",
                     kon_pre = "Pre",
                     kon_post = "Post",
-                    p.itt = "P-verdi") %>%
-  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "")) %>%
+                    p.itt = "P-verdi",
+                    es.itt = "ES") %>%
+  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
   merge_at(part = "header", i = 1, j = 4:5) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 6) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 7) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
-  align(align = "center", part = "header") %>%
+  align(align = "center", j = 2:7, part = "header") %>%
+  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
   print()
 
@@ -187,13 +193,15 @@ table.pp <- cbind(gjsnitt.pp, pp.p) %>%
                     fls_post = "Post",
                     kon_pre = "Pre",
                     kon_post = "Post",
-                    p.pp = "P-verdi") %>%
-  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "")) %>%
+                    p.pp = "P-verdi", 
+                    es.pp = "ES") %>%
+  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
   merge_at(part = "header", i = 1, j = 4:5) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
-  align(align = "center", part = "header") %>%
+  align(align = "center", j = 2:7, part = "header") %>%
+  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
   print()
 
@@ -204,14 +212,16 @@ table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
                     fls_post = "Post",
                     kon_pre = "Pre",
                     kon_post = "Post",
-                    p.ppm = "P-verdi") %>%
-  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "")) %>%
+                    p.ppm = "P-verdi",
+                    es.ppm = "ES") %>%
+  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
   merge_at(part = "header", i = 1, j = 4:5) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 6) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 7) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
-  align(align = "center", part = "header") %>%
+  align(align = "center", j = 2:7, part = "header") %>%
+  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
   print()
 

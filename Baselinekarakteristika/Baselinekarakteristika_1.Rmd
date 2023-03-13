@@ -220,6 +220,7 @@ table.baselinechar001 <- merge(data.frame(table.baselinechar2, row.names = NULL)
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", part = "header") %>%
+  # align(align = "center", i = 1, j = 2:7, part = "body") %>%
   # lar kolonnene tilpasses etter innholdet 
   autofit() %>%
   print()
