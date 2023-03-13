@@ -22,14 +22,13 @@ gjsnitt.itt <- Resultatskjema.ITT %>%
   mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
   mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
   mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
-  drop_na() %>%
   pivot_longer(names_to = "variable",
                values_to = "value",
                cols = vat_mass:pwv) %>%
   group_by(group, time, variable) %>%
   mutate(n = n()) %>%
-  summarise(m.itt = mean(value),
-         s.itt = sd(value)) %>%
+  summarise(m.itt = mean(value, na.rm = TRUE),
+         s.itt = sd(value, na.rm = TRUE)) %>%
   mutate(ms.itt = if_else(variable == "n",
                       as.character(m.itt),
                         paste0(sprintf("%.2f", round(m.itt, 2)),

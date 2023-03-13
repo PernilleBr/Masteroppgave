@@ -32,6 +32,9 @@ ggplot(itt.wc, aes(sample = change.wc.itt)) + stat_qq() + stat_qq_line(col = "re
 itt.wc.lm <- lm(change.wc.itt ~ group, data = itt.wc)
 summary(itt.wc.lm)
 
+# cohens d
+cohensD(change.wc.itt ~ group, dat = itt.wc)
+
 # sjekker for kovariat
 itt.wc.lm.co. <- lm(change.wc.itt ~ group + sex + Pre, data = itt.wc)
 summary(itt.wc.lm.co.)
@@ -100,6 +103,9 @@ ggplot(pp.wc, aes(sample = change.wc.pp)) + stat_qq() + stat_qq_line(col = "red"
 pp.wc.lm <- lm(change.wc.pp ~ group, data = pp.wc)
 summary(pp.wc.lm)
 
+# cohens d
+cohensD(change.wc.pp ~ group, dat = pp.wc)
+
 # sjekker for kovariat
 pp.wc.lm.co <- lm(change.wc.pp ~ group + sex + Pre, data = pp.wc)
 summary(pp.wc.lm.co)
@@ -160,6 +166,9 @@ ggplot(ppm.wc, aes(sample = change.wc.ppm)) + stat_qq() + stat_qq_line(col = "re
 # analyse av endringsscore fra pre til post mellom gruppene
 ppm.wc.lm <- lm(change.wc.ppm ~ group, data = ppm.wc)
 summary(ppm.wc.lm)
+
+# cohens d
+cohensD(change.wc.ppm ~ group, dat = ppm.wc)
 
 # sjekker for kovariat
 ppm.wc.lm.co <- lm(change.wc.ppm ~ group + sex + Pre, data = ppm.wc)

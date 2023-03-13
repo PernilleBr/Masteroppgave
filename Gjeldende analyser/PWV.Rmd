@@ -33,6 +33,9 @@ ggplot(itt.pwv, aes(sample = change.pwv.itt)) + stat_qq() + stat_qq_line(col = "
 itt.pwv.lm <- lm(change.pwv.itt ~ group, data = itt.pwv)
 summary(itt.pwv.lm)
 
+# cohens d
+cohensD(change.pwv.itt ~ group, dat = itt.pwv)
+
 # sjekker for kovariat
 itt.pwv.lm.co. <- lm(change.pwv.itt ~ group + sex + Pre, data = itt.pwv)
 summary(itt.pwv.lm.co.)
@@ -101,6 +104,9 @@ ggplot(pp.pwv, aes(sample = change.pwv.pp)) + stat_qq() + stat_qq_line(col = "re
 pp.pwv.lm <- lm(change.pwv.pp ~ group, data = pp.pwv)
 summary(pp.pwv.lm)
 
+# cohens d
+cohensD(change.pwv.pp ~ group, dat = pp.pwv)
+
 # sjekker for kovariat
 pp.pwv.lm.co <- lm(change.pwv.pp ~ group + sex + Pre, data = pp.pwv)
 summary(pp.pwv.lm.co)
@@ -162,6 +168,9 @@ ggplot(ppm.pwv, aes(sample = change.pwv.ppm)) + stat_qq() + stat_qq_line(col = "
 # analyse av endringsscore fra pre til post mellom gruppene
 ppm.pwv.lm <- lm(change.pwv.ppm ~ group, data = ppm.pwv)
 summary(ppm.pwv.lm)
+
+# cohens d
+cohensD(change.pwv.ppm ~ group, dat = ppm.pwv)
 
 # sjekker for kovariat
 ppm.pwv.lm.co <- lm(change.pwv.ppm ~ group + sex + Pre, data = ppm.pwv)

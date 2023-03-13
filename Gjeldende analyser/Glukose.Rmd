@@ -33,6 +33,9 @@ ggplot(itt.gluk, aes(sample = change.gluk.itt)) + stat_qq() + stat_qq_line(col =
 itt.gluk.lm <- lm(change.gluk.itt ~ group, data = itt.gluk)
 summary(itt.gluk.lm)
 
+# cohens d
+cohensD(change.gluk.itt ~ group, dat = itt.gluk)
+
 # sjekker for kovariat
 itt.gluk.lm.co. <- lm(change.gluk.itt ~ group + sex + Pre, data = itt.gluk)
 summary(itt.gluk.lm.co.)
@@ -101,6 +104,9 @@ ggplot(pp.gluk, aes(sample = change.gluk.pp)) + stat_qq() + stat_qq_line(col = "
 pp.gluk.lm <- lm(change.gluk.pp ~ group, data = pp.gluk)
 summary(pp.gluk.lm)
 
+# cohens d
+cohensD(change.gluk.pp ~ group, dat = pp.gluk)
+
 # sjekker for kovariat
 pp.gluk.lm.co <- lm(change.gluk.pp ~ group + sex + Pre, data = pp.gluk)
 summary(pp.gluk.lm.co)
@@ -162,6 +168,9 @@ ggplot(ppm.gluk, aes(sample = change.gluk.ppm)) + stat_qq() + stat_qq_line(col =
 # analyse av endringsscore fra pre til post mellom gruppene
 ppm.gluk.lm <- lm(change.gluk.ppm ~ group, data = ppm.gluk)
 summary(ppm.gluk.lm)
+
+# cohens d
+cohensD(change.gluk.ppm ~ group, dat = ppm.gluk)
 
 # sjekker for kovariat
 ppm.gluk.lm.co <- lm(change.gluk.ppm ~ group + sex + Pre, data = ppm.gluk)
