@@ -8,23 +8,21 @@ editor_options:
 ---
 
 ```{r}
-library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(lsr)
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat
 itt.vat <- Resultatskjema.ITT %>%
-  select(id, group, sex, age, time, vat_mass) %>%
+  select(id, group, time, sex, vat_mass) %>%
   mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
                         labels = c("Intervensjon", "Kontroll"))) %>% 
-  drop_na() %>%
   pivot_wider(names_from = time,
               values_from = vat_mass) %>%
   mutate(change.vat.itt = Post - Pre) %>%
-  mutate(change.vat.itt.pros = ((Post - Pre) / Pre) * 100) %>%
   group_by(group) %>%
   print()
 
@@ -50,9 +48,19 @@ summary(itt.vat.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av endring for bruk i graf
 mean.itt.vat <- itt.vat %>%
-  drop_na() %>%
-  summarise(mean.vat = mean(change.vat.itt),
-            sd.vat = sd(change.vat.itt)) %>%
+  summarise(mean.vat = mean(change.vat.itt, na.rm = TRUE),
+            sd.vat = sd(change.vat.itt, na.rm = TRUE)) %>%
+  print()
+
+itt.vat2 <- Resultatskjema.ITT %>%
+  select(id, group, time, sex, vat_mass) %>%
+  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  group_by(group, time) %>%
+  print()
+
+mean.itt.vat2 <- itt.vat2 %>%
+  summarise(mean.vat = mean(vat_mass, na.rm = TRUE),
+            sd.vat = sd(vat_mass, na.rm = TRUE)) %>%
   print()
 
 # lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
@@ -82,7 +90,7 @@ Resultatskjema <- read_excel("Resultatskjema.xlsx")
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 pp.vat <- Resultatskjema %>%
-  select(id, sex, group, time, vat_mass) %>%
+  select(id, group, time, sex, vat_mass) %>%
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
@@ -95,11 +103,9 @@ pp.vat <- Resultatskjema %>%
   pivot_wider(names_from = time,
               values_from = vat_mass) %>%
   mutate(change.vat.pp = Post - Pre) %>%
-  mutate(change.vat.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
-
+  
 # sjekker normalfordelingen 
 ggplot(pp.vat, aes(sample = change.vat.pp)) + stat_qq() + stat_qq_line(col = "red")
 
@@ -122,8 +128,8 @@ summary(pp.vat.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.pp.vat <- pp.vat %>%
-  summarise(mean.vat.pp = mean(change.vat.pp),
-            sd.vat.pp = sd(change.vat.pp)) %>%
+  summarise(mean.vat.pp = mean(change.vat.pp, na.rm = TRUE),
+            sd.vat.pp = sd(change.vat.pp, na.rm = TRUE)) %>%
   print()
 
 figur.vat.pp <- mean.pp.vat %>%

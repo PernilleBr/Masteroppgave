@@ -1,0 +1,244 @@
+---
+title: "Endringer_tabell"
+author: "Pernille Breili"
+date: "2023-03-11"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(data.table)
+Resultatskjema <- read_excel("Gjeldende analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Gjeldende analyser/Resultatskjema_ITT.xlsx", na = "NA")
+Analyser.pvalue <- read_excel("Gjeldende analyser/Analyser_p.verdi.xlsx")
+view(Analyser.pvalue)
+
+
+# ordner data fra ITT
+gjsnitt.itt <- Resultatskjema.ITT %>%
+  select(id, group, time, sex, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = vat_mass:pwv) %>%
+  pivot_wider(names_from = time,
+              values_from = value) %>%
+  filter(!is.na(pre),
+         !is.na(post)) %>%
+  pivot_longer(names_to = "time",
+               values_to = "value",
+               cols = pre:post) %>%
+  group_by(group, time, variable) %>%
+  mutate(n = n()) %>%
+  summarise(m.itt = mean(value, na.rm = TRUE),
+         s.itt = sd(value, na.rm = TRUE)) %>%
+  mutate(ms.itt = if_else(variable == "n",
+                      as.character(m.itt),
+                        paste0(sprintf("%.2f", round(m.itt, 2)),
+                      " (",sprintf("%.2f", round(s.itt, 2)),
+                     ")")),
+         group_time = paste(group, time, sep = "_")) %>%
+  ungroup() %>%
+  select(-m.itt, -s.itt, -group, -time) %>%
+  pivot_wider(names_from = group_time,
+              values_from = ms.itt) %>%
+  mutate(variable = factor(variable, levels = c("vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
+                           labels = c("Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
+  select(variable, fls_pre, fls_post, kon_pre, kon_post) %>%
+  arrange(variable) %>%
+  print()
+
+itt.p <- Analyser.pvalue %>%
+  print()
+  select(p.itt, es.itt) %>%
+  drop_na() %>%
+  mutate(p.itt = ifelse(p.itt < 0.05,
+                           paste0(signif(p.itt, 2), "*"),
+                           ifelse(p.itt < 0.1,
+                                   paste0(format(round(p.itt, 3)), "."),
+                                  (paste(format(round(p.itt, 3))))))) %>%
+  mutate(es.itt = sprintf("%.2f", round(es.itt, 2))) %>%
+  print()
+
+# ordner data fra per protocl 1 treningsøkt per uke
+gjsnitt.pp <- Resultatskjema %>%
+  select(id, group, time, sex, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = vat_mass:pwv) %>%
+  pivot_wider(names_from = time,
+              values_from = value) %>%
+  filter(!is.na(pre),
+         !is.na(post)) %>%
+  pivot_longer(names_to = "time",
+               values_to = "value",
+               cols = pre:post) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  group_by(group, time, variable) %>%
+  mutate(n = n()) %>%
+  summarise(m.pp = mean(value, na.rm = TRUE),
+         s.pp = sd(value, na.rm = TRUE)) %>%
+  mutate(ms.pp = if_else(variable == "n",
+                      as.character(m.pp),
+                        paste0(sprintf("%.2f", round(m.pp, 2)),
+                      " (",sprintf("%.2f", round(s.pp, 2)),
+                     ")")),
+         group_time = paste(group, time, sep = "_")) %>%
+  ungroup() %>%
+  select(-m.pp, -s.pp, -group, -time) %>%
+  pivot_wider(names_from = group_time,
+              values_from = ms.pp) %>%
+   mutate(variable = factor(variable, levels = c("vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
+                           labels = c("Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
+  select(variable, fls_pre, fls_post, kon_pre, kon_post) %>%
+  arrange(variable) %>%
+  print()
+
+# p verdier fra pp 
+pp.p <- Analyser.pvalue %>%
+  select(p.pp, es.pp) %>%
+  drop_na() %>%
+  mutate(p.pp = ifelse(p.pp < 0.05,
+                           paste0(signif(p.pp, 2), "*"),
+                           ifelse(p.pp < 0.1,
+                                   paste0(format(round(p.pp, 3)), "."),
+                                  (paste(format(round(p.pp, 3))))))) %>%
+  mutate(es.pp = sprintf("%.2f", round(es.pp, 2))) %>%
+  print()
+
+gjsnitt.ppm <- Resultatskjema %>%
+  select(id, group, time, sex, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
+  pivot_longer(names_to = "variable",
+               values_to = "value",
+               cols = vat_mass:pwv) %>%
+  pivot_wider(names_from = time,
+              values_from = value) %>%
+  filter(!is.na(pre),
+         !is.na(post)) %>%
+  pivot_longer(names_to = "time",
+               values_to = "value",
+               cols = pre:post) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  group_by(group, time, variable) %>%
+  mutate(n = n()) %>%
+  summarise(m.pp = mean(value, na.rm = TRUE),
+         s.pp = sd(value, na.rm = TRUE)) %>%
+  mutate(ms.pp = if_else(variable == "n",
+                      as.character(m.pp),
+                        paste0(sprintf("%.2f", round(m.pp, 2)),
+                      " (",sprintf("%.2f", round(s.pp, 2)),
+                     ")")),
+         group_time = paste(group, time, sep = "_")) %>%
+  ungroup() %>%
+  select(-m.pp, -s.pp, -group, -time) %>%
+  pivot_wider(names_from = group_time,
+              values_from = ms.pp) %>%
+   mutate(variable = factor(variable, levels = c("vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
+                           labels = c("Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
+  select(variable, fls_pre, fls_post, kon_pre, kon_post) %>%
+  arrange(variable) %>%
+  print()
+
+ppm.p <- Analyser.pvalue %>%
+  select(p.ppm, es.ppm) %>%
+  drop_na() %>%
+  mutate(p.ppm = ifelse(p.ppm < 0.05,
+                           paste0(signif(p.ppm, 2), "*"),
+                           ifelse(p.ppm < 0.1,
+                                   paste0(format(round(p.ppm, 3)), "."),
+                                  (paste(format(round(p.ppm, 3))))))) %>%
+  mutate(es.ppm = sprintf("%.2f", round(es.ppm, 2))) %>%
+  print()
+
+table.itt <- cbind(gjsnitt.itt, itt.p) %>%
+  flextable() %>%
+  set_header_labels(variable = "",
+                    fls_pre = "Pre",
+                    fls_post = "Post",
+                    kon_pre = "Pre",
+                    kon_post = "Post",
+                    p.itt = "P-verdi",
+                    es.itt = "ES") %>%
+  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+  merge_at(part = "header", i = 1, j = 4:5) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 7) %>%
+  fontsize(size = 11) %>%
+  fontsize(size = 11, part = "header") %>%
+  align(align = "center", j = 2:7, part = "header") %>%
+  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
+  autofit() %>%
+  print()
+
+table.pp <- cbind(gjsnitt.pp, pp.p) %>%
+  flextable() %>%
+  set_header_labels(variable = "",
+                    fls_pre = "Pre",
+                    fls_post = "Post",
+                    kon_pre = "Pre",
+                    kon_post = "Post",
+                    p.pp = "P-verdi", 
+                    es.pp = "ES") %>%
+  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+  merge_at(part = "header", i = 1, j = 4:5) %>%
+  fontsize(size = 11) %>%
+  fontsize(size = 11, part = "header") %>%
+  align(align = "center", j = 2:7, part = "header") %>%
+  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
+  autofit() %>%
+  print()
+
+table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
+  flextable() %>%
+  set_header_labels(variable = "",
+                    fls_pre = "Pre",
+                    fls_post = "Post",
+                    kon_pre = "Pre",
+                    kon_post = "Post",
+                    p.ppm = "P-verdi",
+                    es.ppm = "ES") %>%
+  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
+  merge_at(part = "header", i = 1, j = 2:3) %>%
+  merge_at(part = "header", i = 1, j = 4:5) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 7) %>%
+  fontsize(size = 11) %>%
+  fontsize(size = 11, part = "header") %>%
+  align(align = "center", j = 2:7, part = "header") %>%
+  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
+  autofit() %>%
+  print()
+
+
+# align(align = "center", i = 1:7, j = 2:6, part = "body") %>%
+
+
+```
+

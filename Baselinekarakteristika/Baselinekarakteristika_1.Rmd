@@ -142,7 +142,7 @@ table.baselinechar2 <- inner_join(x = table2, y = table1) %>%
   print()
 
 # henter tabell for p-verdier 
-p.value.pre <- read_excel("p.value.diff.pre.xlsx")
+p.value.pre <- read_excel("Baselinekarakteristika/p.value.diff.pre.xlsx")
 
 table.p.value.pre <- p.value.pre %>%
   select(variable, p.value, p.value.w, p.value.m) %>%
@@ -220,7 +220,7 @@ table.baselinechar001 <- merge(data.frame(table.baselinechar2, row.names = NULL)
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", part = "header") %>%
-  # align(align = "center", i = 1, j = 2:7, part = "body") %>%
+  align(align = "center", i = 1, j = 2:9, part = "body") %>%
   # lar kolonnene tilpasses etter innholdet 
   autofit() %>%
   print()
