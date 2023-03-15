@@ -3,17 +3,18 @@ title: "PWV"
 author: "Pernille Breili"
 date: "2023-03-09"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
 
-# analyse intention to treat TG
+# analyse intention to treat 
 itt.pwv <- Resultatskjema.ITT %>%
   select(id, group, sex, time, pwv) %>%
-  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -23,7 +24,6 @@ itt.pwv <- Resultatskjema.ITT %>%
   mutate(change.pwv.itt = Post - Pre) %>%
   mutate(change.pwv.itt.pros = ((Post - Pre) / Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -48,9 +48,8 @@ summary(itt.pwv.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av endring for bruk i graf
 mean.itt.pwv <- itt.pwv %>%
-  drop_na() %>%
-  summarise(mean.pwv = mean(change.pwv.itt),
-            sd.pwv = sd(change.pwv.itt)) %>%
+  summarise(mean.pwv = mean(change.pwv.itt, na.rm = TRUE),
+            sd.pwv = sd(change.pwv.itt, na.rm = TRUE)) %>%
   print()
 
 # lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
@@ -62,7 +61,6 @@ dropout.itt.pwv <- itt.pwv %>%
   filter(id != "tr031 008") %>%
   filter(id != "tr031 001") %>%
   filter(id != "tr031 016") %>%
-  drop_na() %>%
   print()
 
 # lager graf
@@ -73,18 +71,25 @@ figur.pwv.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 pp.pwv <- Resultatskjema %>%
   select(id, sex, group, time, pwv) %>%
-  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
-  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -94,7 +99,6 @@ pp.pwv <- Resultatskjema %>%
   mutate(change.pwv.pp = Post - Pre) %>%
   mutate(change.pwv.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -130,14 +134,13 @@ figur.pwv.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 ppm.pwv <- Resultatskjema %>%
   select(id, sex, group, time, pwv) %>%
-  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
   # filtrerer ut irrelevante datapunkter
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
@@ -146,10 +149,16 @@ ppm.pwv <- Resultatskjema %>%
   filter(id != "tr031 002") %>% 
   filter(id != "tr031 006") %>% 
   filter(id != "tr031 009") %>% 
-  filter(id != "tr031 013") %>% 
-  filter(id != "tr031 012") %>%
   filter(id != "tr031 015") %>%
   filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -159,7 +168,6 @@ ppm.pwv <- Resultatskjema %>%
   mutate(change.pwv.ppm = Post - Pre) %>%
   mutate(change.pwv.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -184,8 +192,8 @@ summary(ppm.pwv.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.ppm.pwv <- ppm.pwv %>%
-  summarise(mean.pwv.ppm = mean(change.pwv.ppm),
-            sd.pwv.ppm = sd(change.pwv.ppm)) %>%
+  summarise(mean.pwv.ppm = mean(change.pwv.ppm, na.rm = TRUE),
+            sd.pwv.ppm = sd(change.pwv.ppm, na.rm = TRUE)) %>%
   print()
 
 figur.pwv.ppm <- mean.ppm.pwv %>%

@@ -3,22 +3,22 @@ title: "Lipider"
 author: "Pernille Breili"
 date: "2023-03-09"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat TG
 itt.tg <- Resultatskjema.ITT %>%
   select(id, group, sex, time, `s-triglyserider`) %>%
-  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
                         labels = c("Intervensjon", "Kontroll"))) %>% 
-  drop_na() %>%
   pivot_wider(names_from = time,
               values_from = `s-triglyserider`) %>%
   mutate(change.tg.itt = Post - Pre) %>%
@@ -48,9 +48,8 @@ summary(itt.tg.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av endring for bruk i graf
 mean.itt.tg <- itt.tg %>%
-  drop_na() %>%
-  summarise(mean.tg = mean(change.tg.itt),
-            sd.tg = sd(change.tg.itt)) %>%
+  summarise(mean.tg = mean(change.tg.itt, na.rm = TRUE),
+            sd.tg = sd(change.tg.itt, na.rm = TRUE)) %>%
   print()
 
 # lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
@@ -73,18 +72,25 @@ figur.tg.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 pp.tg <- Resultatskjema %>%
   select(id, sex, group, time, `s-triglyserider`) %>%
-  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
-  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -94,7 +100,6 @@ pp.tg <- Resultatskjema %>%
   mutate(change.tg.pp = Post - Pre) %>%
   mutate(change.tg.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -119,8 +124,8 @@ summary(pp.tg.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.pp.tg <- pp.tg %>%
-  summarise(mean.tg.pp = mean(change.tg.pp),
-            sd.tg.pp = sd(change.tg.pp)) %>%
+  summarise(mean.tg.pp = mean(change.tg.pp, na.rm = TRUE),
+            sd.tg.pp = sd(change.tg.pp, na.rm = TRUE)) %>%
   print()
 
 figur.tg.pp <- mean.pp.tg %>%
@@ -130,14 +135,13 @@ figur.tg.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 ppm.tg <- Resultatskjema %>%
   select(id, sex, group, time, `s-triglyserider`) %>%
-  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
   # filtrerer ut irrelevante datapunkter
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
@@ -146,10 +150,16 @@ ppm.tg <- Resultatskjema %>%
   filter(id != "tr031 002") %>% 
   filter(id != "tr031 006") %>% 
   filter(id != "tr031 009") %>% 
-  filter(id != "tr031 013") %>% 
-  filter(id != "tr031 012") %>%
   filter(id != "tr031 015") %>%
   filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -159,7 +169,6 @@ ppm.tg <- Resultatskjema %>%
   mutate(change.tg.ppm = Post - Pre) %>%
   mutate(change.tg.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -184,8 +193,8 @@ summary(ppm.tg.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.ppm.tg <- ppm.tg %>%
-  summarise(mean.tg.ppm = mean(change.tg.ppm),
-            sd.tg.ppm = sd(change.tg.ppm)) %>%
+  summarise(mean.tg.ppm = mean(change.tg.ppm, na.rm = TRUE),
+            sd.tg.ppm = sd(change.tg.ppm, na.rm = TRUE)) %>%
   print()
 
 figur.tg.ppm <- mean.ppm.tg %>%
@@ -196,13 +205,12 @@ figur.tg.ppm
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat HDL
 itt.hdl <- Resultatskjema.ITT %>%
   select(id, group, sex, time, `s-hdl`) %>%
-  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -212,7 +220,6 @@ itt.hdl <- Resultatskjema.ITT %>%
   mutate(change.hdl.itt = Post - Pre) %>%
   mutate(change.hdl.itt.pros = ((Post - Pre) / Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -237,9 +244,8 @@ summary(itt.hdl.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av endring for bruk i graf
 mean.itt.hdl <- itt.hdl %>%
-  drop_na() %>%
-  summarise(mean.hdl = mean(change.hdl.itt),
-            sd.hdl = sd(change.hdl.itt)) %>%
+  summarise(mean.hdl = mean(change.hdl.itt, na.rm = TRUE),
+            sd.hdl = sd(change.hdl.itt, na.rm = TRUE)) %>%
   print()
 
 # lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
@@ -262,18 +268,25 @@ figur.hdl.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 pp.hdl <- Resultatskjema %>%
   select(id, group, sex, time, `s-hdl`) %>%
-  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
-  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -283,7 +296,6 @@ pp.hdl <- Resultatskjema %>%
   mutate(change.hdl.pp = Post - Pre) %>%
   mutate(change.hdl.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -308,8 +320,8 @@ summary(pp.hdl.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.pp.hdl <- pp.hdl %>%
-  summarise(mean.hdl.pp = mean(change.hdl.pp),
-            sd.hdl.pp = sd(change.hdl.pp)) %>%
+  summarise(mean.hdl.pp = mean(change.hdl.pp, na.rm = TRUE),
+            sd.hdl.pp = sd(change.hdl.pp, na.rm = TRUE)) %>%
   print()
 
 figur.hdl.pp <- mean.pp.hdl %>%
@@ -319,14 +331,13 @@ figur.hdl.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 ppm.hdl <- Resultatskjema %>%
   select(id, group, sex, time, `s-hdl`) %>%
-  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
   # filtrerer ut irrelevante datapunkter
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
@@ -335,10 +346,16 @@ ppm.hdl <- Resultatskjema %>%
   filter(id != "tr031 002") %>% 
   filter(id != "tr031 006") %>% 
   filter(id != "tr031 009") %>% 
-  filter(id != "tr031 013") %>% 
-  filter(id != "tr031 012") %>%
   filter(id != "tr031 015") %>%
   filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -373,8 +390,8 @@ summary(ppm.hdl.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.ppm.hdl <- ppm.hdl %>%
-  summarise(mean.hdl.ppm = mean(change.hdl.ppm),
-            sd.hdl.ppm = sd(change.hdl.ppm)) %>%
+  summarise(mean.hdl.ppm = mean(change.hdl.ppm, na.rm = TRUE),
+            sd.hdl.ppm = sd(change.hdl.ppm, na.rm = TRUE)) %>%
   print()
 
 figur.hdl.ppm <- mean.ppm.hdl %>%
@@ -384,13 +401,12 @@ figur.hdl.ppm
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat HDL
 itt.ldl <- Resultatskjema.ITT %>%
   select(id, group, sex, time, `s-ldl`) %>%
-  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -400,7 +416,6 @@ itt.ldl <- Resultatskjema.ITT %>%
   mutate(change.ldl.itt = Post - Pre) %>%
   mutate(change.ldl.itt.pros = ((Post - Pre) / Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -425,9 +440,8 @@ summary(itt.ldl.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av endring for bruk i graf
 mean.itt.ldl <- itt.ldl %>%
-  drop_na() %>%
-  summarise(mean.ldl = mean(change.ldl.itt),
-            sd.ldl = sd(change.ldl.itt)) %>%
+  summarise(mean.ldl = mean(change.ldl.itt, na.rm = TRUE),
+            sd.ldl = sd(change.ldl.itt, na.rm = TRUE)) %>%
   print()
 
 # lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
@@ -457,11 +471,18 @@ Resultatskjema <- read_excel("Resultatskjema.xlsx")
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 pp.ldl <- Resultatskjema %>%
   select(id, group, sex, time, `s-ldl`) %>%
-  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
-  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -471,7 +492,6 @@ pp.ldl <- Resultatskjema %>%
   mutate(change.ldl.pp = Post - Pre) %>%
   mutate(change.ldl.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -496,8 +516,8 @@ summary(pp.ldl.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.pp.ldl <- pp.ldl %>%
-  summarise(mean.ldl.pp = mean(change.ldl.pp),
-            sd.ldl.pp = sd(change.ldl.pp)) %>%
+  summarise(mean.ldl.pp = mean(change.ldl.pp, na.rm = TRUE),
+            sd.ldl.pp = sd(change.ldl.pp, na.rm = TRUE)) %>%
   print()
 
 figur.ldl.pp <- mean.pp.ldl %>%
@@ -507,14 +527,13 @@ figur.ldl.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 ppm.ldl <- Resultatskjema %>%
   select(id, group, sex, time, `s-ldl`) %>%
-  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
   # filtrerer ut irrelevante datapunkter
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
@@ -523,10 +542,16 @@ ppm.ldl <- Resultatskjema %>%
   filter(id != "tr031 002") %>% 
   filter(id != "tr031 006") %>% 
   filter(id != "tr031 009") %>% 
-  filter(id != "tr031 013") %>% 
-  filter(id != "tr031 012") %>%
   filter(id != "tr031 015") %>%
   filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -536,7 +561,6 @@ ppm.ldl <- Resultatskjema %>%
   mutate(change.ldl.ppm = Post - Pre) %>%
   mutate(change.ldl.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -561,8 +585,8 @@ summary(ppm.ldl.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.ppm.ldl <- ppm.ldl %>%
-  summarise(mean.ldl.ppm = mean(change.ldl.ppm),
-            sd.ldl.ppm = sd(change.ldl.ppm)) %>%
+  summarise(mean.ldl.ppm = mean(change.ldl.ppm, na.rm = TRUE),
+            sd.ldl.ppm = sd(change.ldl.ppm, na.rm = TRUE)) %>%
   print()
 
 figur.ldl.ppm <- mean.ppm.ldl %>%

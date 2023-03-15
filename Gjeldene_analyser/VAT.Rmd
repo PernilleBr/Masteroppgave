@@ -15,7 +15,6 @@ Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na
 # analyse intention to treat
 itt.vat <- Resultatskjema.ITT %>%
   select(id, group, time, sex, vat_mass) %>%
-  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -32,6 +31,8 @@ ggplot(itt.vat, aes(sample = change.vat.itt)) + stat_qq() + stat_qq_line(col = "
 # analyse av endringsscore fra pre til post mellom gruppene
 itt.vat.lm <- lm(change.vat.itt ~ group, data = itt.vat)
 summary(itt.vat.lm)
+
+t.test(change.vat.itt ~ group, var.equal = TRUE, data = itt.vat)
 
 # cohens d
 cohensD(change.vat.itt ~ group, dat = itt.vat)
@@ -50,17 +51,6 @@ summary(itt.vat.lm.co.sex)
 mean.itt.vat <- itt.vat %>%
   summarise(mean.vat = mean(change.vat.itt, na.rm = TRUE),
             sd.vat = sd(change.vat.itt, na.rm = TRUE)) %>%
-  print()
-
-itt.vat2 <- Resultatskjema.ITT %>%
-  select(id, group, time, sex, vat_mass) %>%
-  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
-  group_by(group, time) %>%
-  print()
-
-mean.itt.vat2 <- itt.vat2 %>%
-  summarise(mean.vat = mean(vat_mass, na.rm = TRUE),
-            sd.vat = sd(vat_mass, na.rm = TRUE)) %>%
   print()
 
 # lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
@@ -94,8 +84,15 @@ pp.vat <- Resultatskjema %>%
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
-  filter(id != "tr031 007") %>% 
-  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -146,7 +143,6 @@ Resultatskjema <- read_excel("Resultatskjema.xlsx")
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 ppm.vat <- Resultatskjema %>%
   select(id, sex, group, time, vat_mass) %>%
-  # filtrerer ut irrelevante datapunkter
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
@@ -154,11 +150,16 @@ ppm.vat <- Resultatskjema %>%
   filter(id != "tr031 002") %>% 
   filter(id != "tr031 006") %>% 
   filter(id != "tr031 009") %>% 
-  filter(id != "tr031 013") %>% 
-  filter(id != "tr031 012") %>%
   filter(id != "tr031 015") %>%
   filter(id != "tr031 014") %>%
-  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),

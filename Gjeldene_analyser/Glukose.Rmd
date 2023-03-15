@@ -3,17 +3,18 @@ title: "Glukose"
 author: "Pernille Breili"
 date: "2023-03-09"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat TG
 itt.gluk <- Resultatskjema.ITT %>%
   select(id, group, sex, time, `s-glukose`) %>%
-  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -23,7 +24,6 @@ itt.gluk <- Resultatskjema.ITT %>%
   mutate(change.gluk.itt = Post - Pre) %>%
   mutate(change.gluk.itt.pros = ((Post - Pre) / Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -48,9 +48,8 @@ summary(itt.gluk.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av endring for bruk i graf
 mean.itt.gluk <- itt.gluk %>%
-  drop_na() %>%
-  summarise(mean.gluk = mean(change.gluk.itt),
-            sd.gluk = sd(change.gluk.itt)) %>%
+  summarise(mean.gluk = mean(change.gluk.itt, na.rm = TRUE),
+            sd.gluk = sd(change.gluk.itt, na.rm = TRUE)) %>%
   print()
 
 # lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
@@ -73,18 +72,25 @@ figur.gluk.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 pp.gluk <- Resultatskjema %>%
   select(id, sex, group, time, `s-glukose`) %>%
-  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
-  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -94,7 +100,6 @@ pp.gluk <- Resultatskjema %>%
   mutate(change.gluk.pp = Post - Pre) %>%
   mutate(change.gluk.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -119,8 +124,8 @@ summary(pp.gluk.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.pp.gluk <- pp.gluk %>%
-  summarise(mean.gluk.pp = mean(change.gluk.pp),
-            sd.gluk.pp = sd(change.gluk.pp)) %>%
+  summarise(mean.gluk.pp = mean(change.gluk.pp, na.rm = TRUE),
+            sd.gluk.pp = sd(change.gluk.pp, na.rm = TRUE)) %>%
   print()
 
 figur.gluk.pp <- mean.pp.gluk %>%
@@ -130,14 +135,13 @@ figur.gluk.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 ppm.gluk <- Resultatskjema %>%
   select(id, sex, group, time, `s-glukose`) %>%
-  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
   # filtrerer ut irrelevante datapunkter
   filter(id != "tr031 012") %>% 
   filter(id != "tr031 013") %>% 
@@ -146,10 +150,16 @@ ppm.gluk <- Resultatskjema %>%
   filter(id != "tr031 002") %>% 
   filter(id != "tr031 006") %>% 
   filter(id != "tr031 009") %>% 
-  filter(id != "tr031 013") %>% 
-  filter(id != "tr031 012") %>%
   filter(id != "tr031 015") %>%
   filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
          group = factor(group, levels = c("fls", "kon"),
@@ -159,7 +169,6 @@ ppm.gluk <- Resultatskjema %>%
   mutate(change.gluk.ppm = Post - Pre) %>%
   mutate(change.gluk.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
-  drop_na() %>%
   print()
 
 # sjekker normalfordelingen 
@@ -184,8 +193,8 @@ summary(ppm.gluk.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.ppm.gluk <- ppm.gluk %>%
-  summarise(mean.gluk.ppm = mean(change.gluk.ppm),
-            sd.gluk.ppm = sd(change.gluk.ppm)) %>%
+  summarise(mean.gluk.ppm = mean(change.gluk.ppm, na.rm = TRUE),
+            sd.gluk.ppm = sd(change.gluk.ppm, na.rm = TRUE)) %>%
   print()
 
 figur.gluk.ppm <- mean.ppm.gluk %>%
