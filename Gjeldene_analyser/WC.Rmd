@@ -21,8 +21,6 @@ itt.wc <- Resultatskjema.ITT %>%
                         labels = c("Intervensjon", "Kontroll"))) %>% 
   pivot_wider(names_from = time,
               values_from = wc) %>%
-  filter(!is.na(Pre),
-         !is.na(Post)) %>%
   mutate(change.wc.itt = Post - Pre) %>%
   mutate(change.wc.itt.pros = ((Post - Pre) / Pre) * 100) %>%
   group_by(group) %>%
