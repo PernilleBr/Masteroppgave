@@ -4,14 +4,14 @@ author: "Pernille Breili"
 date: "2023-03-15"
 output: html_document
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(data.table)
 Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
-Analyser.pvalue <- read_excel("Gjeldene_analyser/Analyser_p.verdi.xlsx")
+Analyser.pvalue <- read_excel("Analyser_p.verdi.xlsx")
 
 
 # ordner data fra ITT
@@ -48,13 +48,12 @@ gjsnitt.itt <- Resultatskjema.ITT %>%
   print()
 
 itt.p <- Analyser.pvalue %>%
-  print()
   select(p.itt, es.itt) %>%
   drop_na() %>%
   mutate(p.itt = ifelse(p.itt < 0.05,
-                           paste0(signif(p.itt, 2), "*"),
+                           paste0(signif(p.itt, 2), " *"),
                            ifelse(p.itt < 0.1,
-                                   paste0(format(round(p.itt, 3)), "."),
+                                   paste0(format(round(p.itt, 3)), " ¶"),
                                   (paste(format(round(p.itt, 3))))))) %>%
   mutate(es.itt = sprintf("%.2f", round(es.itt, 2))) %>%
   print()
@@ -109,9 +108,9 @@ pp.p <- Analyser.pvalue %>%
   select(p.pp, es.pp) %>%
   drop_na() %>%
   mutate(p.pp = ifelse(p.pp < 0.05,
-                           paste0(signif(p.pp, 2), "*"),
+                           paste0(signif(p.pp, 2), " *"),
                            ifelse(p.pp < 0.1,
-                                   paste0(format(round(p.pp, 3)), "."),
+                                   paste0(format(round(p.pp, 3)), " ¶"),
                                   (paste(format(round(p.pp, 3))))))) %>%
   mutate(es.pp = sprintf("%.2f", round(es.pp, 2))) %>%
   print()
@@ -169,9 +168,9 @@ ppm.p <- Analyser.pvalue %>%
   select(p.ppm, es.ppm) %>%
   drop_na() %>%
   mutate(p.ppm = ifelse(p.ppm < 0.05,
-                           paste0(signif(p.ppm, 2), "*"),
+                           paste0(signif(p.ppm, 2), " *"),
                            ifelse(p.ppm < 0.1,
-                                   paste0(format(round(p.ppm, 3)), "."),
+                                   paste0(format(round(p.ppm, 3)), " ¶"),
                                   (paste(format(round(p.ppm, 3))))))) %>%
   mutate(es.ppm = sprintf("%.2f", round(es.ppm, 2))) %>%
   print()
@@ -185,10 +184,9 @@ table.itt <- cbind(gjsnitt.itt, itt.p) %>%
                     kon_post = "Post",
                     p.itt = "P-verdi",
                     es.itt = "ES") %>%
-  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
+  add_header_row(values = c("A", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
   merge_at(part = "header", i = 1, j = 4:5) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 7) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", j = 2:7, part = "header") %>%
@@ -205,7 +203,7 @@ table.pp <- cbind(gjsnitt.pp, pp.p) %>%
                     kon_post = "Post",
                     p.pp = "P-verdi", 
                     es.pp = "ES") %>%
-  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
+  add_header_row(values = c("B", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
   merge_at(part = "header", i = 1, j = 4:5) %>%
   fontsize(size = 11) %>%
@@ -224,10 +222,10 @@ table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
                     kon_post = "Post",
                     p.ppm = "P-verdi",
                     es.ppm = "ES") %>%
-  add_header_row(values = c("", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
+  add_header_row(values = c("C", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
   merge_at(part = "header", i = 1, j = 4:5) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 7) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). * P < 0.05; ¶ P < 0.1 ", colwidths = 7) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", j = 2:7, part = "header") %>%

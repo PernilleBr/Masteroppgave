@@ -128,7 +128,7 @@ mean.pp.pwv <- pp.pwv %>%
   print()
 
 figur.pwv.pp <- mean.pp.pwv %>%
-  ggplot(aes(group, mean.pwv.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.pwv.pp - sd.pwv.pp, ymax = mean.pwv.pp + sd.pwv.pp), width = 0.1) + theme_classic() + geom_point(data = pp.pwv, aes(group, change.pwv.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i pulsbølgehastighet (m/s)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.5, 2)
+  ggplot(aes(group, mean.pwv.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.pwv.pp - sd.pwv.pp, ymax = mean.pwv.pp + sd.pwv.pp), width = 0.1) + theme_classic() + geom_point(data = pp.pwv, aes(group, change.pwv.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.5, 2)
 
 figur.pwv.pp
 ```
@@ -197,8 +197,11 @@ mean.ppm.pwv <- ppm.pwv %>%
   print()
 
 figur.pwv.ppm <- mean.ppm.pwv %>%
-  ggplot(aes(group, mean.pwv.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.pwv.ppm - sd.pwv.ppm, ymax = mean.pwv.ppm + sd.pwv.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.pwv, aes(group, change.pwv.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i pulsbølgehastighet (m/s)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.5, 2)
+  ggplot(aes(group, mean.pwv.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.pwv.ppm - sd.pwv.ppm, ymax = mean.pwv.ppm + sd.pwv.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.pwv, aes(group, change.pwv.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.5, 2)
 
 figur.pwv.ppm
+
+library(cowplot)
+plot_grid(figur.pwv.itt, figur.pwv.pp, figur.pwv.ppm, nrow = 1, labels = c('A', 'B', 'C'))
 ```
 

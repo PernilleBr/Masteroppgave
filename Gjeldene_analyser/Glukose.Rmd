@@ -9,8 +9,8 @@ editor_options:
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat TG
 itt.gluk <- Resultatskjema.ITT %>%
@@ -129,7 +129,7 @@ mean.pp.gluk <- pp.gluk %>%
   print()
 
 figur.gluk.pp <- mean.pp.gluk %>%
-  ggplot(aes(group, mean.gluk.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.pp - sd.gluk.pp, ymax = mean.gluk.pp + sd.gluk.pp), width = 0.1) + theme_classic() + geom_point(data = pp.gluk, aes(group, change.gluk.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i glukose (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1)
+  ggplot(aes(group, mean.gluk.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.pp - sd.gluk.pp, ymax = mean.gluk.pp + sd.gluk.pp), width = 0.1) + theme_classic() + geom_point(data = pp.gluk, aes(group, change.gluk.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1)
 
 figur.gluk.pp
 ```
@@ -198,8 +198,11 @@ mean.ppm.gluk <- ppm.gluk %>%
   print()
 
 figur.gluk.ppm <- mean.ppm.gluk %>%
-  ggplot(aes(group, mean.gluk.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.ppm - sd.gluk.ppm, ymax = mean.gluk.ppm + sd.gluk.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.gluk, aes(group, change.gluk.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i glukose (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1)
+  ggplot(aes(group, mean.gluk.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.ppm - sd.gluk.ppm, ymax = mean.gluk.ppm + sd.gluk.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.gluk, aes(group, change.gluk.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1)
 
 figur.gluk.ppm
+
+library(cowplot)
+plot_grid(figur.gluk.itt, figur.gluk.pp, figur.gluk.ppm, nrow = 1, labels = c('A', 'B', 'C'))
 ```
 

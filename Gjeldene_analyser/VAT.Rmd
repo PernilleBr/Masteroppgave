@@ -9,8 +9,8 @@ editor_options:
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(lsr)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat
 itt.vat <- Resultatskjema.ITT %>%
@@ -130,13 +130,13 @@ mean.pp.vat <- pp.vat %>%
   print()
 
 figur.vat.pp <- mean.pp.vat %>%
-  ggplot(aes(group, mean.vat.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.pp - sd.vat.pp, ymax = mean.vat.pp + sd.vat.pp), width = 0.1) + theme_classic() + geom_point(data = pp.vat, aes(group, change.vat.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400)
+  ggplot(aes(group, mean.vat.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.pp - sd.vat.pp, ymax = mean.vat.pp + sd.vat.pp), width = 0.1) + theme_classic() + geom_point(data = pp.vat, aes(group, change.vat.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) 
 
 figur.vat.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
@@ -194,12 +194,12 @@ summary(ppm.vat.lm.co.sex)
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.ppm.vat <- ppm.vat %>%
-  summarise(mean.vat.ppm = mean(change.vat.ppm),
-            sd.vat.ppm = sd(change.vat.ppm)) %>%
+  summarise(mean.vat.ppm = mean(change.vat.ppm, na.rm = TRUE),
+            sd.vat.ppm = sd(change.vat.ppm, na.rm = TRUE)) %>%
   print()
 
 figur.vat.ppm <- mean.ppm.vat %>%
-  ggplot(aes(group, mean.vat.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.ppm - sd.vat.ppm, ymax = mean.vat.ppm + sd.vat.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.vat, aes(group, change.vat.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400)
+  ggplot(aes(group, mean.vat.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.ppm - sd.vat.ppm, ymax = mean.vat.ppm + sd.vat.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.vat, aes(group, change.vat.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) + annotate("text", x=1.5, y=200, label= "*", size = 8)
 
 figur.vat.ppm
 

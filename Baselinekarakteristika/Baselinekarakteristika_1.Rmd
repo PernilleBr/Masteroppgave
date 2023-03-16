@@ -10,7 +10,7 @@ editor_options:
 ```{r}
 #slår sammen tabeller i en for å få med og uten kjønn
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # uavnhengig av kjønn
 table2 <- Resultatskjema %>%
@@ -154,19 +154,19 @@ table.p.value.pre <- p.value.pre %>%
   mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "vo2max", "wc", "vat", "handgrip", "rm"),
                            labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   mutate(p.value = ifelse(p.value < 0.05,
-                           paste0(signif(p.value, 2), "*"),
+                           paste0(signif(p.value, 2), " *"),
                            ifelse(p.value < 0.1,
-                                   paste0(format(round(p.value, 3)), "."),
+                                   paste0(format(round(p.value, 3)), " ¶"),
                                   (paste(format(round(p.value, 3))))))) %>%
   mutate(p.value.w = ifelse(p.value.w < 0.05,
-                           paste0(signif(p.value.w, 2), "*"),
+                           paste0(signif(p.value.w, 2), " *"),
                            ifelse(p.value.w < 0.1,
-                                   paste0(format(round(p.value.w, 3)), "."),
+                                   paste0(format(round(p.value.w, 3)), " ¶"),
                                   (paste(format(round(p.value.w, 3))))))) %>%
   mutate(p.value.m = ifelse(p.value.m < 0.05,
-                           paste0(signif(p.value.m, 2), "*"),
+                           paste0(signif(p.value.m, 2), " *"),
                            ifelse(p.value.m < 0.1,
-                                   paste0(format(round(p.value.m, 3)), "."),
+                                   paste0(format(round(p.value.m, 3)), " ¶"),
                                   (paste(format(round(p.value.m, 3))))))) %>%
   print()
 
@@ -188,7 +188,7 @@ table.baselinechar00 <- inner_join(x = table.baselinechar2, y = table.p.value.pr
   merge_at(part = "header", i = 1, j = 2:4) %>% 
   merge_at(part = "header", i = 1, j = 5:7) %>%
   merge_at(part = "header", i = 1, j = 8:10) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 10) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). * P < 0.05; ¶ P < 0.1 ", colwidths = 10) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", part = "header") %>%
@@ -216,7 +216,7 @@ table.baselinechar001 <- merge(data.frame(table.baselinechar2, row.names = NULL)
   merge_at(part = "header", i = 1, j = 2:4) %>%
   merge_at(part = "header", i = 1, j = 5:7) %>%
   merge_at(part = "header", i = 1, j = 8:10) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). *P < 0.05; .P < 0.1 ", colwidths = 10) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). * P < 0.05; ¶ P < 0.1 ", colwidths = 10) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", part = "header") %>%

@@ -4,13 +4,13 @@ author: "Pernille Breili"
 date: "2023-03-09"
 output: html_document
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat TG
 itt.tg <- Resultatskjema.ITT %>%
@@ -66,7 +66,7 @@ dropout.itt.tg <- itt.tg %>%
 
 # lager graf
 figur.tg.itt <- mean.itt.tg %>%
-  ggplot(aes(group, mean.tg, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg - sd.tg, ymax = mean.tg + sd.tg), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.tg, aes(group, change.tg.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i triglyserider (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8)
+  ggplot(aes(group, mean.tg, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg - sd.tg, ymax = mean.tg + sd.tg), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.tg, aes(group, change.tg.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i triglyserider (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + annotate("text", x=1.5, y=0.5, label= "¶", size = 5)
 
 figur.tg.itt
 ```
@@ -129,7 +129,7 @@ mean.pp.tg <- pp.tg %>%
   print()
 
 figur.tg.pp <- mean.pp.tg %>%
-  ggplot(aes(group, mean.tg.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.pp - sd.tg.pp, ymax = mean.tg.pp + sd.tg.pp), width = 0.1) + theme_classic() + geom_point(data = pp.tg, aes(group, change.tg.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i triglyserider (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8)
+  ggplot(aes(group, mean.tg.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.pp - sd.tg.pp, ymax = mean.tg.pp + sd.tg.pp), width = 0.1) + theme_classic() + geom_point(data = pp.tg, aes(group, change.tg.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + annotate("text", x=1.5, y=0.5, label= "¶", size = 5)
 
 figur.tg.pp
 ```
@@ -198,7 +198,7 @@ mean.ppm.tg <- ppm.tg %>%
   print()
 
 figur.tg.ppm <- mean.ppm.tg %>%
-  ggplot(aes(group, mean.tg.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.ppm - sd.tg.ppm, ymax = mean.tg.ppm + sd.tg.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.tg, aes(group, change.tg.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i triglyserider (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8)
+  ggplot(aes(group, mean.tg.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.ppm - sd.tg.ppm, ymax = mean.tg.ppm + sd.tg.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.tg, aes(group, change.tg.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8)
 
 figur.tg.ppm
 ```
@@ -325,7 +325,7 @@ mean.pp.hdl <- pp.hdl %>%
   print()
 
 figur.hdl.pp <- mean.pp.hdl %>%
-  ggplot(aes(group, mean.hdl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.pp - sd.hdl.pp, ymax = mean.hdl.pp + sd.hdl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.hdl, aes(group, change.hdl.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i HDL-kolesterol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
+  ggplot(aes(group, mean.hdl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.pp - sd.hdl.pp, ymax = mean.hdl.pp + sd.hdl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.hdl, aes(group, change.hdl.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
 
 figur.hdl.pp
 ```
@@ -395,7 +395,7 @@ mean.ppm.hdl <- ppm.hdl %>%
   print()
 
 figur.hdl.ppm <- mean.ppm.hdl %>%
-  ggplot(aes(group, mean.hdl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.ppm - sd.hdl.ppm, ymax = mean.hdl.ppm + sd.hdl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.hdl, aes(group, change.hdl.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i HDL-koleserol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
+  ggplot(aes(group, mean.hdl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.ppm - sd.hdl.ppm, ymax = mean.hdl.ppm + sd.hdl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.hdl, aes(group, change.hdl.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
 
 figur.hdl.ppm
 ```
@@ -464,7 +464,7 @@ figur.ldl.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -521,7 +521,7 @@ mean.pp.ldl <- pp.ldl %>%
   print()
 
 figur.ldl.pp <- mean.pp.ldl %>%
-  ggplot(aes(group, mean.ldl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.pp - sd.ldl.pp, ymax = mean.ldl.pp + sd.ldl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.ldl, aes(group, change.ldl.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i LDL-kolesterol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
+  ggplot(aes(group, mean.ldl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.pp - sd.ldl.pp, ymax = mean.ldl.pp + sd.ldl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.ldl, aes(group, change.ldl.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
 
 figur.ldl.pp
 ```
@@ -590,12 +590,18 @@ mean.ppm.ldl <- ppm.ldl %>%
   print()
 
 figur.ldl.ppm <- mean.ppm.ldl %>%
-  ggplot(aes(group, mean.ldl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.ppm - sd.ldl.ppm, ymax = mean.ldl.ppm + sd.ldl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.ldl, aes(group, change.ldl.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i LDL-koleserol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
+  ggplot(aes(group, mean.ldl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.ppm - sd.ldl.ppm, ymax = mean.ldl.ppm + sd.ldl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.ldl, aes(group, change.ldl.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
 
 figur.ldl.ppm
 ```
 ```{r}
 library(cowplot)
-plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, labels = c('A', 'B', 'C'))
+plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, labels = c('A', '', '', 'B', '', '', 'C'))
+
+tgfig <- plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, nrow = 1, labels = c('A', 'B', 'C'))
+
+hdlfig <- plot_grid(figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, nrow = 1, labels = c('A', 'B', 'C'))
+
+ldlfig <- plot_grid(figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, nrow = 1, labels = c('A', 'B', 'C'))
 ```
 
