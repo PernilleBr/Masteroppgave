@@ -22,12 +22,6 @@ table2 <- Resultatskjema %>%
   group_by(group) %>%
   # lager en ny variabler som teller antall i grupperte variabler
   mutate(n = n()) %>%
-  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
-  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
-  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
-  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
-  mutate(rm = as.numeric(`1rm_newton`, na.rm = TRUE)) %>%
-  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
   # endrer verdier fra gram til kg
   mutate(total_mass_kg = total_mass / 1000) %>%
   mutate(lean_mass_kg = lean_mass / 1000) %>%
@@ -70,12 +64,6 @@ table1 <- Resultatskjema %>%
   group_by(group, sex) %>%
   # lager en ny variabler som teller antall i grupperte variabler
   mutate(n = n()) %>%
-  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
-  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
-  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
-  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
-  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
-  mutate(rm = as.numeric(`1rm_newton`, na.rm = TRUE)) %>%
   # endrer verdier fra gram til kg
   mutate(total_mass_kg = total_mass / 1000) %>%
   mutate(lean_mass_kg = lean_mass / 1000) %>%
@@ -105,7 +93,7 @@ table1 <- Resultatskjema %>%
   pivot_wider(names_from = group_sex,
               values_from = ms) %>%
   # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
-  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass_kg", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "vo2max_ml_min_kg", "wc", "vat_mass", "handgrip", "rm"),
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass_kg", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "wc", "vat_mass", "vo2max_ml_min_kg", "handgrip", "rm"),
                            labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   select(variable, kon_1, kon_2, fls_1, fls_2) %>%
   arrange(variable) %>%
