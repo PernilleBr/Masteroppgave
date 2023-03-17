@@ -129,7 +129,7 @@ mean.pp.tg <- pp.tg %>%
   print()
 
 figur.tg.pp <- mean.pp.tg %>%
-  ggplot(aes(group, mean.tg.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.pp - sd.tg.pp, ymax = mean.tg.pp + sd.tg.pp), width = 0.1) + theme_classic() + geom_point(data = pp.tg, aes(group, change.tg.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + annotate("text", x=1.5, y=0.5, label= "¶", size = 5)
+  ggplot(aes(group, mean.tg.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.pp - sd.tg.pp, ymax = mean.tg.pp + sd.tg.pp), width = 0.1) + theme_classic() + geom_point(data = pp.tg, aes(group, change.tg.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + annotate("text", x=1.5, y=0.5, label= "*", size = 8)
 
 figur.tg.pp
 ```
@@ -599,6 +599,8 @@ library(cowplot)
 plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, labels = c('A', '', '', 'B', '', '', 'C'))
 
 tgfig <- plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, nrow = 1, labels = c('A', 'B', 'C'))
+
+tgfig
 
 hdlfig <- plot_grid(figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, nrow = 1, labels = c('A', 'B', 'C'))
 
