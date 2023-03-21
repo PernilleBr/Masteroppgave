@@ -9,8 +9,8 @@ editor_options:
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat TG
 itt.tg <- Resultatskjema.ITT %>%
@@ -604,6 +604,10 @@ tgfig
 
 hdlfig <- plot_grid(figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, nrow = 1, labels = c('A', 'B', 'C'))
 
+hdlfig
+
 ldlfig <- plot_grid(figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, nrow = 1, labels = c('A', 'B', 'C'))
+
+ldlfig
 ```
 
