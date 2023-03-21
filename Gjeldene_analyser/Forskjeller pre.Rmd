@@ -9,7 +9,7 @@ editor_options:
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 view(Resultatskjema)
 
 pre.diff <- Resultatskjema %>%
@@ -19,19 +19,6 @@ pre.diff <- Resultatskjema %>%
   filter(time == "pre") %>%
   # grupperer etter gruppe 
   group_by(group) %>%
-  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
-  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
-  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
-  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
-  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
-  mutate(vat_volume = as.numeric(vat_volume, na.rm = TRUE)) %>%
-  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
-  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
-  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
-  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
-  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
-  mutate(strength_leg = as.numeric(`1rm_newton`, na.rm = TRUE)) %>%
-  drop_na() %>%
   print()
 
 ggplot(pre.diff, aes(sample = age)) + stat_qq() + stat_qq_line(col = "red")
