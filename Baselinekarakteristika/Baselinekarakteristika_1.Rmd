@@ -15,7 +15,7 @@ Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 # uavnhengig av kjønn
 table2 <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
+  select(id, group, time, sex, age, height, weight, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
   # grupperer etter gruppe og kjønn
@@ -23,10 +23,9 @@ table2 <- Resultatskjema %>%
   # lager en ny variabler som teller antall i grupperte variabler
   mutate(n = n()) %>%
   # endrer verdier fra gram til kg
-  mutate(total_mass_kg = total_mass / 1000) %>%
   mutate(lean_mass_kg = lean_mass / 1000) %>%
   mutate(fat_mass_kg = fat_mass / 1000) %>%
-  select(-total_mass, -fat_mass, -lean_mass, -vo2max_ml_min_kg_6x5, -`1rm_newton`) %>%
+  select(-fat_mass, -lean_mass) %>%
   # forlenger tabellen slik at gjennomsnittsverdier er mulig å regne ut
   pivot_longer(names_to = "variable",
                values_to = "value",
@@ -46,7 +45,7 @@ table2 <- Resultatskjema %>%
   select(-m, -s) %>%
   # endrer tabellen slik at gruppene, kontroll og intervensjon, danner en rad
   # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
-  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass_kg", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "vo2max_ml_min_kg", "wc", "vat_mass", "handgrip", "rm"),
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "wc", "vat_mass", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton"),
                            labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   pivot_wider(names_from = group,
               values_from = ms) %>%
@@ -57,7 +56,7 @@ table2 <- Resultatskjema %>%
 # fordelt på kjønn
 table1 <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, age, height, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
+  select(id, group, time, sex, age, height, weight, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
   # grupperer etter gruppe og kjønn
@@ -65,10 +64,9 @@ table1 <- Resultatskjema %>%
   # lager en ny variabler som teller antall i grupperte variabler
   mutate(n = n()) %>%
   # endrer verdier fra gram til kg
-  mutate(total_mass_kg = total_mass / 1000) %>%
   mutate(lean_mass_kg = lean_mass / 1000) %>%
   mutate(fat_mass_kg = fat_mass / 1000) %>%
-  select(-total_mass, -fat_mass, -lean_mass, -vo2max_ml_min_kg_6x5, -`1rm_newton`) %>%
+  select(-fat_mass, -lean_mass) %>%
   
   # forlenger tabellen slik at gjennomsnittsverdier er mulig å regne ut
   pivot_longer(names_to = "variable",
@@ -93,7 +91,7 @@ table1 <- Resultatskjema %>%
   pivot_wider(names_from = group_sex,
               values_from = ms) %>%
   # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
-  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass_kg", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "wc", "vat_mass", "vo2max_ml_min_kg", "handgrip", "rm"),
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "wc", "vat_mass", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton"),
                            labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   select(variable, kon_1, kon_2, fls_1, fls_2) %>%
   arrange(variable) %>%
@@ -156,6 +154,7 @@ table.p.value.pre <- p.value.pre %>%
                            ifelse(p.value.m < 0.1,
                                    paste0(format(round(p.value.m, 3)), " ¶"),
                                   (paste(format(round(p.value.m, 3))))))) %>%
+  arrange(variable) %>%
   print()
 
 table.baselinechar00 <- inner_join(x = table.baselinechar2, y = table.p.value.pre) %>%
@@ -204,14 +203,17 @@ table.baselinechar001 <- merge(data.frame(table.baselinechar2, row.names = NULL)
   merge_at(part = "header", i = 1, j = 2:4) %>%
   merge_at(part = "header", i = 1, j = 5:7) %>%
   merge_at(part = "header", i = 1, j = 8:10) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). * P < 0.05; ¶ P < 0.1 ", colwidths = 10) %>%
+  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). * P < 0.050; ¶ P < 0.100 ", colwidths = 10) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", part = "header") %>%
   align(align = "center", i = 1, j = 2:9, part = "body") %>%
   # lar kolonnene tilpasses etter innholdet 
   autofit() %>%
+  # flextable::save_as_docx(path = "baseline_table.docx")
   print()
+
+
 ```
 
 

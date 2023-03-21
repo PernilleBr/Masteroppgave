@@ -8,7 +8,8 @@ editor_options:
 ---
 
 ```{r}
-library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(lsr)
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr);
+library(flextable); library(pbkrtest); library(broom); library(lsr)
 Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
 
@@ -33,6 +34,8 @@ itt.vat.lm <- lm(change.vat.itt ~ group, data = itt.vat)
 summary(itt.vat.lm)
 
 t.test(change.vat.itt ~ group, var.equal = TRUE, data = itt.vat)
+t.test(change.vat.itt ~ group, data = itt.vat)
+var.test(change.vat.itt ~ group, data = itt.vat)
 
 # cohens d
 cohensD(change.vat.itt ~ group, dat = itt.vat)
@@ -74,7 +77,7 @@ figur.vat.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -109,6 +112,9 @@ ggplot(pp.vat, aes(sample = change.vat.pp)) + stat_qq() + stat_qq_line(col = "re
 # analyse av endringsscore fra pre til post mellom gruppene
 pp.vat.lm <- lm(change.vat.pp ~ group, data = pp.vat)
 summary(pp.vat.lm)
+
+var.test(change.vat.pp ~ group, data = pp.vat)
+t.test(change.vat.pp ~ group, var.equal = TRUE, data = pp.vat)
 
 # cohens d
 cohensD(change.vat.pp ~ group, dat = pp.vat)
