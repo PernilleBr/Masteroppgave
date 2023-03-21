@@ -38,8 +38,8 @@ table2 <- Resultatskjema %>%
   # formatterer data slik at det ser fint ut
   mutate(ms = if_else(variable == "n",
                       as.character(m),
-                        paste0(signif(m, 3),
-                      " (",signif(s, 3),
+                        paste0(sprintf("%.2f", round(m, 2)),
+                      " (",sprintf("%.2f", round(s, 2)),
                      ")"))) %>%
   ungroup() %>%
   select(-m, -s) %>%
@@ -131,7 +131,6 @@ table.baselinechar2 <- inner_join(x = table2, y = table1) %>%
 p.value.pre <- read_excel("Baselinekarakteristika/p.value.diff.pre.xlsx")
 
 table.p.value.pre <- p.value.pre %>%
-  select(variable, p.value, p.value.w, p.value.m) %>%
   filter(variable != "glukose") %>%
   filter(variable != "triglyserider") %>%  
   filter(variable != "hdl") %>%
@@ -140,17 +139,17 @@ table.p.value.pre <- p.value.pre %>%
   mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "vo2max", "wc", "vat", "handgrip", "rm"),
                            labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   mutate(p.value = ifelse(p.value < 0.05,
-                           paste0(signif(p.value, 2), " *"),
+                           paste0(sprintf("%.3f", round(p.value, 3)), " *"),
                            ifelse(p.value < 0.1,
                                    paste0(format(round(p.value, 3)), " ¶"),
                                   (paste(format(round(p.value, 3))))))) %>%
   mutate(p.value.w = ifelse(p.value.w < 0.05,
-                           paste0(signif(p.value.w, 2), " *"),
+                           paste0(sprintf("%.3f", round(p.value.w, 3)), " *"),
                            ifelse(p.value.w < 0.1,
                                    paste0(format(round(p.value.w, 3)), " ¶"),
                                   (paste(format(round(p.value.w, 3))))))) %>%
   mutate(p.value.m = ifelse(p.value.m < 0.05,
-                           paste0(signif(p.value.m, 2), " *"),
+                           paste0(sprintf("%.3f", round(p.value.m, 3)), " *"),
                            ifelse(p.value.m < 0.1,
                                    paste0(format(round(p.value.m, 3)), " ¶"),
                                   (paste(format(round(p.value.m, 3))))))) %>%
