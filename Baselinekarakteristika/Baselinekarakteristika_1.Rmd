@@ -204,7 +204,8 @@ table.baselinechar001 <- merge(data.frame(table.baselinechar2, row.names = NULL)
   align(align = "center", i = 1, j = 2:9, part = "body") %>%
   # lar kolonnene tilpasses etter innholdet 
   autofit() %>%
-  # flextable::save_as_docx(path = "baseline_table.docx")
+  # flextable::save_as_docx(path = "baseline_table1.docx")
+  flextable::save_as_image(path = "baseline_table.png")
   print()
 
 

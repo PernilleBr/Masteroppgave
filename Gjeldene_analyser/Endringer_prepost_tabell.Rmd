@@ -192,6 +192,7 @@ table.itt <- cbind(gjsnitt.itt, itt.p) %>%
   align(align = "center", j = 2:7, part = "header") %>%
   align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
+  flextable::save_as_image(path = "table_itt.png")
   print()
 
 table.pp <- cbind(gjsnitt.pp, pp.p) %>%
@@ -211,6 +212,7 @@ table.pp <- cbind(gjsnitt.pp, pp.p) %>%
   align(align = "center", j = 2:7, part = "header") %>%
   align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
+  flextable::save_as_image(path = "table_pp.png")
   print()
 
 table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
@@ -231,6 +233,7 @@ table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
   align(align = "center", j = 2:7, part = "header") %>%
   align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
+  flextable::save_as_image(path = "table_ppm.png")
   print()
 
 
