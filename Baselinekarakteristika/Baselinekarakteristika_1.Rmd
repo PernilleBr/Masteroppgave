@@ -15,7 +15,7 @@ Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
 # uavnhengig av kjønn
 table2 <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, age, height, weight, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
+  select(id, group, time, sex, age, height, weight, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
   # grupperer etter gruppe og kjønn
@@ -45,8 +45,8 @@ table2 <- Resultatskjema %>%
   select(-m, -s) %>%
   # endrer tabellen slik at gruppene, kontroll og intervensjon, danner en rad
   # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
-  mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "wc", "vat_mass", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton"),
-                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "wc", "vat_mass", "s-triglyserider", "s-hdl", "s-ldl", "s-glukose", "pwv", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton"),
+                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   pivot_wider(names_from = group,
               values_from = ms) %>%
   select(variable, kon, fls) %>%
@@ -56,7 +56,7 @@ table2 <- Resultatskjema %>%
 # fordelt på kjønn
 table1 <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, age, height, weight, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
+  select(id, group, time, sex, age, height, weight, bmi, fat_mass, lean_mass, sys, dia, wc, vat_mass, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
   # grupperer etter gruppe og kjønn
@@ -91,8 +91,8 @@ table1 <- Resultatskjema %>%
   pivot_wider(names_from = group_sex,
               values_from = ms) %>%
   # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
-  mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "wc", "vat_mass", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton"),
-                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "wc", "vat_mass", "s-triglyserider", "s-hdl", "s-ldl", "s-glukose", "pwv", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton"),
+                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   select(variable, kon_1, kon_2, fls_1, fls_2) %>%
   arrange(variable) %>%
   print()
@@ -131,13 +131,8 @@ table.baselinechar2 <- inner_join(x = table2, y = table1) %>%
 p.value.pre <- read_excel("Baselinekarakteristika/p.value.diff.pre.xlsx")
 
 table.p.value.pre <- p.value.pre %>%
-  filter(variable != "glukose") %>%
-  filter(variable != "triglyserider") %>%  
-  filter(variable != "hdl") %>%
-  filter(variable != "ldl") %>%
-  filter(variable != "pwv") %>%
-  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "vo2max", "wc", "vat", "handgrip", "rm"),
-                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+  mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "triglyserider", "hdl", "ldl", "glukose", "pwv", "vo2max", "wc", "vat", "handgrip", "rm"),
+                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Midjeomkrets (cm)", "Visceralt fett (g)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   mutate(p.value = ifelse(p.value < 0.05,
                            paste0(sprintf("%.3f", round(p.value, 3)), " *"),
                            ifelse(p.value < 0.1,
