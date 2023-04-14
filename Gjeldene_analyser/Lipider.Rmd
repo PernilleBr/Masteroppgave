@@ -66,13 +66,13 @@ dropout.itt.tg <- itt.tg %>%
 
 # lager graf
 figur.tg.itt <- mean.itt.tg %>%
-  ggplot(aes(group, mean.tg, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg - sd.tg, ymax = mean.tg + sd.tg), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.tg, aes(group, change.tg.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i triglyserider (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + annotate("text", x=1.5, y=0.5, label= "¶", size = 5)
+  ggplot(aes(group, mean.tg, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg - sd.tg, ymax = mean.tg + sd.tg), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.tg, aes(group, change.tg.itt), size = 2, alpha = 0.4) + labs(x = "", y = paste("Endring fra pre- til posttest", "i triglyserider (mmol/l)", sep="\n")) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + annotate("text", x=1.5, y=0.5, label= "¶", size = 5) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.tg.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -129,13 +129,13 @@ mean.pp.tg <- pp.tg %>%
   print()
 
 figur.tg.pp <- mean.pp.tg %>%
-  ggplot(aes(group, mean.tg.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.pp - sd.tg.pp, ymax = mean.tg.pp + sd.tg.pp), width = 0.1) + theme_classic() + geom_point(data = pp.tg, aes(group, change.tg.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + annotate("text", x=1.5, y=0.5, label= "*", size = 8)
+  ggplot(aes(group, mean.tg.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.pp - sd.tg.pp, ymax = mean.tg.pp + sd.tg.pp), width = 0.1) + theme_classic() + geom_point(data = pp.tg, aes(group, change.tg.pp), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + annotate("text", x=1.5, y=0.5, label= "*", size = 8) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.tg.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
@@ -198,15 +198,15 @@ mean.ppm.tg <- ppm.tg %>%
   print()
 
 figur.tg.ppm <- mean.ppm.tg %>%
-  ggplot(aes(group, mean.tg.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.ppm - sd.tg.ppm, ymax = mean.tg.ppm + sd.tg.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.tg, aes(group, change.tg.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8)
+  ggplot(aes(group, mean.tg.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.tg.ppm - sd.tg.ppm, ymax = mean.tg.ppm + sd.tg.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.tg, aes(group, change.tg.ppm), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-1.2, 0.8) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.tg.ppm
 ```
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat HDL
 itt.hdl <- Resultatskjema.ITT %>%
@@ -262,13 +262,13 @@ dropout.itt.hdl <- itt.hdl %>%
 
 # lager graf
 figur.hdl.itt <- mean.itt.hdl %>%
-  ggplot(aes(group, mean.hdl, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl - sd.hdl, ymax = mean.hdl + sd.hdl), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.hdl, aes(group, change.hdl.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i HDL-kolesterol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
+  ggplot(aes(group, mean.hdl, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl - sd.hdl, ymax = mean.hdl + sd.hdl), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.hdl, aes(group, change.hdl.itt), size = 2, alpha = 0.4) + labs(x = "", y = paste("Endring fra pre- til posttest", "i HDL-kolesterol (mmol/l)", sep="\n")) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.hdl.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -325,13 +325,13 @@ mean.pp.hdl <- pp.hdl %>%
   print()
 
 figur.hdl.pp <- mean.pp.hdl %>%
-  ggplot(aes(group, mean.hdl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.pp - sd.hdl.pp, ymax = mean.hdl.pp + sd.hdl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.hdl, aes(group, change.hdl.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
+  ggplot(aes(group, mean.hdl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.pp - sd.hdl.pp, ymax = mean.hdl.pp + sd.hdl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.hdl, aes(group, change.hdl.pp), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.hdl.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
@@ -395,14 +395,14 @@ mean.ppm.hdl <- ppm.hdl %>%
   print()
 
 figur.hdl.ppm <- mean.ppm.hdl %>%
-  ggplot(aes(group, mean.hdl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.ppm - sd.hdl.ppm, ymax = mean.hdl.ppm + sd.hdl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.hdl, aes(group, change.hdl.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4)
+  ggplot(aes(group, mean.hdl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.hdl.ppm - sd.hdl.ppm, ymax = mean.hdl.ppm + sd.hdl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.hdl, aes(group, change.hdl.ppm), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.45, 0.4) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.hdl.ppm
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat HDL
 itt.ldl <- Resultatskjema.ITT %>%
@@ -458,13 +458,13 @@ dropout.itt.ldl <- itt.ldl %>%
 
 # lager graf
 figur.ldl.itt <- mean.itt.ldl %>%
-  ggplot(aes(group, mean.ldl, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl - sd.ldl, ymax = mean.ldl + sd.ldl), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.ldl, aes(group, change.ldl.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i LDL-kolesterol (mmol/l)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
+  ggplot(aes(group, mean.ldl, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl - sd.ldl, ymax = mean.ldl + sd.ldl), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.ldl, aes(group, change.ldl.itt), size = 2, alpha = 0.4) + labs(x = "", y = paste("Endring fra pre- til posttest", "i LDL-kolesterol (mmol/l)", sep="\n")) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.ldl.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -521,13 +521,13 @@ mean.pp.ldl <- pp.ldl %>%
   print()
 
 figur.ldl.pp <- mean.pp.ldl %>%
-  ggplot(aes(group, mean.ldl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.pp - sd.ldl.pp, ymax = mean.ldl.pp + sd.ldl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.ldl, aes(group, change.ldl.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
+  ggplot(aes(group, mean.ldl.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.pp - sd.ldl.pp, ymax = mean.ldl.pp + sd.ldl.pp), width = 0.1) + theme_classic() + geom_point(data = pp.ldl, aes(group, change.ldl.pp), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.ldl.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
@@ -590,7 +590,7 @@ mean.ppm.ldl <- ppm.ldl %>%
   print()
 
 figur.ldl.ppm <- mean.ppm.ldl %>%
-  ggplot(aes(group, mean.ldl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.ppm - sd.ldl.ppm, ymax = mean.ldl.ppm + sd.ldl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.ldl, aes(group, change.ldl.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2)
+  ggplot(aes(group, mean.ldl.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.ldl.ppm - sd.ldl.ppm, ymax = mean.ldl.ppm + sd.ldl.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.ldl, aes(group, change.ldl.ppm), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-0.5, 2) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.ldl.ppm
 ```
@@ -609,5 +609,12 @@ hdlfig
 ldlfig <- plot_grid(figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, nrow = 1, labels = c('A', 'B', 'C'))
 
 ldlfig
+
+#nye separate grafer (større størrelse)
+plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, nrow = 1, labels = c('A', 'B', 'C'), align = "hv")
+
+plot_grid(figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, nrow = 1, labels = c('A', 'B', 'C'), align = "hv")
+
+plot_grid(figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, nrow = 1, labels = c('A', 'B', 'C'), align = "hv")
 ```
 
