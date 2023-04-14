@@ -227,7 +227,6 @@ table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
   add_header_row(values = c("C", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
   merge_at(part = "header", i = 1, j = 4:5) %>%
-  add_footer_lines(values = "A; intention-to-treat (N = 12 i intervensjon og N = 21 i kontroll), B; per-protocol (økning med en treningsøkt per uke) (N = 6 i intervensjon og N = 18 i kontroll) og C; per-protocol (økning med to treningsøkter per uke) (N = 3 i intervensjon og N = 18 i kontroll). * P < 0.050; ¶ P < 0.100.") %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", j = 2:7, part = "header") %>%

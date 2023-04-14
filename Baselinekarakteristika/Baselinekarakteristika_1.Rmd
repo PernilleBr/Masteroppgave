@@ -46,7 +46,7 @@ table2 <- Resultatskjema %>%
   # endrer tabellen slik at gruppene, kontroll og intervensjon, danner en rad
   # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
   mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl", "s-glukose", "pwv", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton"),
-                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+                           labels = c("n", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   pivot_wider(names_from = group,
               values_from = ms) %>%
   select(variable, kon, fls) %>%
@@ -92,7 +92,7 @@ table1 <- Resultatskjema %>%
               values_from = ms) %>%
   # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
   mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl", "s-glukose", "pwv", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton"),
-                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+                           labels = c("n", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   select(variable, kon_1, kon_2, fls_1, fls_2) %>%
   arrange(variable) %>%
   print()
@@ -133,7 +133,7 @@ p.value.pre <- read_excel("Baselinekarakteristika/p.value.diff.pre.xlsx")
 
 table.p.value.pre <- p.value.pre %>%
   mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "vat", "wc", "triglyserider", "hdl", "ldl", "glukose", "pwv", "vo2max", "handgrip", "rm"),
-                           labels = c("N", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
+                           labels = c("n", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
   arrange(variable) %>%
   mutate(p.value = ifelse(p.value < 0.05,
                            paste0(sprintf("%.3f", round(p.value, 3)), " *"),
@@ -187,19 +187,18 @@ table.baselinechar001 <- #inner_join(x = table.baselinechar2, y = table.p.value.
   set_header_labels(variable.x = "",
                     fls = "Intervensjon",
                     kon = "Kontroll",
-                    p.value = "P-verdi",
+                    p.value = "p-verdi",
                     fls_1 = "Intervensjon",
                     kon_1 = "Kontroll",
-                    p.value.w = "P-verdi",
+                    p.value.w = "p-verdi",
                     fls_2 = "Intervensjon",
                     kon_2 = "Kontroll",
-                    p.value.m = "P-verdi") %>%
+                    p.value.m = "p-verdi") %>%
   add_header_row(values = c("", "Begge kjønn", "Begge kjønn", "Begge kjønn", "Kvinner", "Kvinner", "Kvinner", "Menn", "Menn", "Menn")) %>%
   # samler gruppene i en rad
   merge_at(part = "header", i = 1, j = 2:4) %>%
   merge_at(part = "header", i = 1, j = 5:7) %>%
   merge_at(part = "header", i = 1, j = 8:10) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). * P < 0.050; ¶ P < 0.100 ", colwidths = 10) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", part = "header") %>%

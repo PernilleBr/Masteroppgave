@@ -70,7 +70,7 @@ dropout.itt.vat <- itt.vat %>%
 
 # lager graf
 figur.vat.itt <- mean.itt.vat %>%
-  ggplot(aes(group, mean.vat, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat - sd.vat, ymax = mean.vat + sd.vat), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.vat, aes(group, change.vat.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i visceralt fett (g)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400)
+  ggplot(aes(group, mean.vat, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat - sd.vat, ymax = mean.vat + sd.vat), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.vat, aes(group, change.vat.itt), size = 2, alpha = 0.4) + labs(x = "", y = "Endring fra pre- til posttest i visceralt fett (g)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400)
 
 figur.vat.itt
 
@@ -136,7 +136,7 @@ mean.pp.vat <- pp.vat %>%
   print()
 
 figur.vat.pp <- mean.pp.vat %>%
-  ggplot(aes(group, mean.vat.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.pp - sd.vat.pp, ymax = mean.vat.pp + sd.vat.pp), width = 0.1) + theme_classic() + geom_point(data = pp.vat, aes(group, change.vat.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) 
+  ggplot(aes(group, mean.vat.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.pp - sd.vat.pp, ymax = mean.vat.pp + sd.vat.pp), width = 0.1) + theme_classic() + geom_point(data = pp.vat, aes(group, change.vat.pp), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) 
 
 figur.vat.pp
 ```
@@ -205,7 +205,7 @@ mean.ppm.vat <- ppm.vat %>%
   print()
 
 figur.vat.ppm <- mean.ppm.vat %>%
-  ggplot(aes(group, mean.vat.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.ppm - sd.vat.ppm, ymax = mean.vat.ppm + sd.vat.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.vat, aes(group, change.vat.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) + annotate("text", x=1.5, y=200, label= "*", size = 8)
+  ggplot(aes(group, mean.vat.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.ppm - sd.vat.ppm, ymax = mean.vat.ppm + sd.vat.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.vat, aes(group, change.vat.ppm), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) + annotate("text", x=1.5, y=200, label= "*", size = 8)
 
 figur.vat.ppm
 
