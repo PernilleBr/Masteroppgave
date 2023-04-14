@@ -182,7 +182,7 @@ table.itt <- cbind(gjsnitt.itt, itt.p) %>%
                     fls_post = "Post",
                     kon_pre = "Pre",
                     kon_post = "Post",
-                    p.itt = "P-verdi",
+                    p.itt = "p-verdi",
                     es.itt = "ES") %>%
   add_header_row(values = c("A", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
@@ -202,7 +202,7 @@ table.pp <- cbind(gjsnitt.pp, pp.p) %>%
                     fls_post = "Post",
                     kon_pre = "Pre",
                     kon_post = "Post",
-                    p.pp = "P-verdi", 
+                    p.pp = "p-verdi", 
                     es.pp = "ES") %>%
   add_header_row(values = c("B", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
@@ -222,7 +222,7 @@ table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
                     fls_post = "Post",
                     kon_pre = "Pre",
                     kon_post = "Post",
-                    p.ppm = "P-verdi",
+                    p.ppm = "p-verdi",
                     es.ppm = "ES") %>%
   add_header_row(values = c("C", "Intervensjon", "Intervensjon", "Kontroll", "Kontroll", "", "")) %>%
   merge_at(part = "header", i = 1, j = 2:3) %>%
