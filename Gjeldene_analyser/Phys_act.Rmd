@@ -1,0 +1,101 @@
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+
+# analyse per protocl 1 treningsøkt per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+phys_act <- Resultatskjema %>%
+  select(id, sex, group, time, phys_act) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = phys_act) %>%
+  mutate(change.phys_act = Post - Pre) %>%
+  mutate(change.phys_act.pros = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(phys_act, aes(sample = change.phys_act)) + stat_qq() + stat_qq_line(col = "red")
+
+phys_act.lm <- lm(change.phys_act ~ group, data = phys_act)
+summary(phys_act.lm)
+
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.phys_act <- phys_act %>%
+  summarise(mean.phys_act = mean(change.phys_act, na.rm = TRUE),
+            sd.phys_act = sd(change.phys_act, na.rm = TRUE)) %>%
+  print()
+
+
+phys_act.pp <- Resultatskjema %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  select(id, sex, group, time, phys_act) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = phys_act) %>%
+  mutate(change.phys_act.pp = Post - Pre) %>%
+  mutate(change.phys_act.pros.pp = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+ggplot(phys_act.pp, aes(sample = change.phys_act.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+phys_act.lm.pp <- lm(change.phys_act.pp ~ group, data = phys_act.pp)
+summary(phys_act.lm.pp)
+
+
+phys_act.ppm <- Resultatskjema %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  select(id, sex, group, time, phys_act) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = phys_act) %>%
+  mutate(change.phys_act.ppm = Post - Pre) %>%
+  mutate(change.phys_act.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+ggplot(phys_act.ppm, aes(sample = change.phys_act.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+phys_act.lm.ppm <- lm(change.phys_act.ppm ~ group, data = phys_act.ppm)
+summary(phys_act.lm.ppm)
+```
+
