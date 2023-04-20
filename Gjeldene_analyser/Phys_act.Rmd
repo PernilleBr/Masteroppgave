@@ -24,6 +24,10 @@ ggplot(phys_act, aes(sample = change.phys_act)) + stat_qq() + stat_qq_line(col =
 phys_act.lm <- lm(change.phys_act ~ group, data = phys_act)
 summary(phys_act.lm)
 
+mean.pros.phys_act <- phys_act %>%
+  summarise(mean.pros.phys_act = mean(change.phys_act.pros, na.rm = TRUE),
+            sd.pros.phys_act = sd(change.phys_act.pros, na.rm = TRUE)) %>%
+  print()
 
 # lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
 mean.phys_act <- phys_act %>%
@@ -55,6 +59,11 @@ phys_act.pp <- Resultatskjema %>%
   mutate(change.phys_act.pp = Post - Pre) %>%
   mutate(change.phys_act.pros.pp = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
+  print()
+
+mean.phys_act.pp <- phys_act.pp %>%
+  summarise(mean.phys_act = mean(change.phys_act.pp, na.rm = TRUE),
+            sd.phys_act = sd(change.phys_act.pp, na.rm = TRUE)) %>%
   print()
 
 ggplot(phys_act.pp, aes(sample = change.phys_act.pp)) + stat_qq() + stat_qq_line(col = "red")
@@ -91,6 +100,11 @@ phys_act.ppm <- Resultatskjema %>%
   mutate(change.phys_act.ppm = Post - Pre) %>%
   mutate(change.phys_act.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
   group_by(group) %>%
+  print()
+
+mean.phys_act.ppm <- phys_act.ppm %>%
+  summarise(mean.phys_act.ppm = mean(change.phys_act.ppm, na.rm = TRUE),
+            sd.phys_act.ppm = sd(change.phys_act.ppm, na.rm = TRUE)) %>%
   print()
 
 ggplot(phys_act.ppm, aes(sample = change.phys_act.ppm)) + stat_qq() + stat_qq_line(col = "red")
