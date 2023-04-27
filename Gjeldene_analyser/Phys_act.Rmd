@@ -21,8 +21,15 @@ phys_act <- Resultatskjema %>%
 # sjekker normalfordelingen 
 ggplot(phys_act, aes(sample = change.phys_act)) + stat_qq() + stat_qq_line(col = "red")
 
+# statistisk test for forskjeller mellom gruppene i endring i aktivitetsnivå 
 phys_act.lm <- lm(change.phys_act ~ group, data = phys_act)
 summary(phys_act.lm)
+
+phys_act.lm.pre <- lm(Pre ~ group, data = phys_act)
+summary(phys_act.lm.pre)
+
+phys_act.lm.post <- lm(Post ~ group, data = phys_act)
+summary(phys_act.lm.post)
 
 mean.pros.phys_act <- phys_act %>%
   summarise(mean.pros.phys_act = mean(change.phys_act.pros, na.rm = TRUE),
@@ -111,5 +118,23 @@ ggplot(phys_act.ppm, aes(sample = change.phys_act.ppm)) + stat_qq() + stat_qq_li
 
 phys_act.lm.ppm <- lm(change.phys_act.ppm ~ group, data = phys_act.ppm)
 summary(phys_act.lm.ppm)
+```
+
+```{r}
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+
+# regner ut endringer fra pre til post
+phys_act_change <- Resultatskjema %>%
+  select(id, sex, group, time, phys_act) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  group_by(time, group) %>%
+  summarise(mean_change = mean(phys_act, na.rm = TRUE),
+            sd = sd(phys_act, na.rm = TRUE)) %>%
+  print()
+
+# 
 ```
 
