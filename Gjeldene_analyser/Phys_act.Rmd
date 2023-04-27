@@ -1,6 +1,6 @@
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -121,7 +121,7 @@ summary(phys_act.lm.ppm)
 ```
 
 ```{r}
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 # regner ut endringer fra pre til post
 phys_act_change <- Resultatskjema %>%
