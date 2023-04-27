@@ -1,0 +1,208 @@
+---
+title: "WC"
+author: "Pernille Breili"
+date: "2023-03-09"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
+
+# analyse intention to treat
+itt.wc <- Resultatskjema.ITT %>%
+  select(id, group, time, wc) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = wc) %>%
+  mutate(change.wc.itt = Post - Pre) %>%
+  mutate(change.wc.itt.pros = ((Post - Pre) / Pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(itt.wc, aes(sample = change.wc.itt)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+itt.wc.lm <- lm(change.wc.itt ~ group, data = itt.wc)
+summary(itt.wc.lm)
+
+# cohens d
+cohensD(change.wc.itt ~ group, dat = itt.wc)
+
+# sjekker for kovariat
+itt.wc.lm.co. <- lm(change.wc.itt ~ group + sex + Pre, data = itt.wc)
+summary(itt.wc.lm.co.)
+
+itt.wc.lm.co.pre <- lm(change.wc.itt ~ group + Pre, data = itt.wc)
+summary(itt.wc.lm.co.pre)
+
+itt.wc.lm.co.sex <- lm(change.wc.itt ~ group + sex, data = itt.wc)
+summary(itt.wc.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av endring for bruk i graf
+mean.itt.wc <- itt.wc %>%
+  summarise(mean.wc = mean(change.wc.itt, na.rm = TRUE),
+            sd.wc = sd(change.wc.itt, na.rm = TRUE)) %>%
+  print()
+
+# lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
+dropout.itt.wc <- itt.wc %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  drop_na() %>%
+  print()
+
+# lager graf
+figur.wc.itt <- mean.itt.wc %>%
+  ggplot(aes(group, mean.wc, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.wc - sd.wc, ymax = mean.wc + sd.wc), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.wc, aes(group, change.wc.itt), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i midjeomkrets (cm))") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-7, 6)
+
+figur.wc.itt
+
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+
+# analyse per protocl 1 treningsøkt per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+pp.wc <- Resultatskjema %>%
+  select(id, sex, group, time, wc) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>% 
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = wc) %>%
+  mutate(change.wc.pp = Post - Pre) %>%
+  mutate(change.wc.pp.pros = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(pp.wc, aes(sample = change.wc.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+pp.wc.lm <- lm(change.wc.pp ~ group, data = pp.wc)
+summary(pp.wc.lm)
+
+# cohens d
+cohensD(change.wc.pp ~ group, dat = pp.wc)
+
+# sjekker for kovariat
+pp.wc.lm.co <- lm(change.wc.pp ~ group + sex + Pre, data = pp.wc)
+summary(pp.wc.lm.co)
+
+pp.wc.lm.co.pre <- lm(change.wc.pp ~ group + Pre, data = pp.wc)
+summary(pp.wc.lm.co.pre)
+
+pp.wc.lm.co.sex <- lm(change.wc.pp ~ group + sex + Pre, data = pp.wc)
+summary(pp.wc.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.pp.wc <- pp.wc %>%
+  summarise(mean.wc.pp = mean(change.wc.pp),
+            sd.wc.pp = sd(change.wc.pp)) %>%
+  print()
+
+figur.wc.pp <- mean.pp.wc %>%
+  ggplot(aes(group, mean.wc.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.wc.pp - sd.wc.pp, ymax = mean.wc.pp + sd.wc.pp), width = 0.1) + theme_classic() + geom_point(data = pp.wc, aes(group, change.wc.pp), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i midjeomkrets (cm)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-7, 6)
+
+figur.wc.pp
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
+Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+
+# analyse per protocl 2 treningsøkter per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+ppm.wc <- Resultatskjema %>%
+  select(id, sex, group, time, wc) %>%
+  # filtrerer ut irrelevante datapunkter
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = wc) %>%
+  mutate(change.wc.ppm = Post - Pre) %>%
+  mutate(change.wc.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(ppm.wc, aes(sample = change.wc.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+ppm.wc.lm <- lm(change.wc.ppm ~ group, data = ppm.wc)
+summary(ppm.wc.lm)
+
+# cohens d
+cohensD(change.wc.ppm ~ group, dat = ppm.wc)
+
+# sjekker for kovariat
+ppm.wc.lm.co <- lm(change.wc.ppm ~ group + sex + Pre, data = ppm.wc)
+summary(ppm.wc.lm.co)
+
+ppm.wc.lm.co.pre <- lm(change.wc.ppm ~ group + Pre, data = ppm.wc)
+summary(ppm.wc.lm.co.pre)
+
+ppm.wc.lm.co.sex <- lm(change.wc.ppm ~ group + sex + Pre, data = ppm.wc)
+summary(ppm.wc.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.ppm.wc <- ppm.wc %>%
+  summarise(mean.wc.ppm = mean(change.wc.ppm, na.rm = TRUE),
+            sd.wc.ppm = sd(change.wc.ppm, na.rm = TRUE)) %>%
+  print()
+
+figur.wc.ppm <- mean.ppm.wc %>%
+  ggplot(aes(group, mean.wc.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.wc.ppm - sd.wc.ppm, ymax = mean.wc.ppm + sd.wc.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.wc, aes(group, change.wc.ppm), size = 2, alpha = 0.4) + labs(x = "Gruppe", y = "Endring i midjeomkrets (cm)") + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-7, 6)
+
+figur.wc.ppm
+```
+

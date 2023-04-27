@@ -1,0 +1,218 @@
+---
+title: "VAT"
+author: "Pernille Breili"
+date: "2023-03-09"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr);
+library(flextable); library(pbkrtest); library(broom); library(lsr)
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
+
+# analyse intention to treat
+itt.vat <- Resultatskjema.ITT %>%
+  select(id, group, time, sex, vat_mass) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = vat_mass) %>%
+  mutate(change.vat.itt = Post - Pre) %>%
+  group_by(group) %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(itt.vat, aes(sample = change.vat.itt)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+itt.vat.lm <- lm(change.vat.itt ~ group, data = itt.vat)
+summary(itt.vat.lm)
+
+t.test(change.vat.itt ~ group, var.equal = TRUE, data = itt.vat)
+t.test(change.vat.itt ~ group, data = itt.vat)
+var.test(change.vat.itt ~ group, data = itt.vat)
+
+# cohens d
+cohensD(change.vat.itt ~ group, dat = itt.vat)
+
+# sjekker for kovariat
+itt.vat.lm.co. <- lm(change.vat.itt ~ group + sex + Pre, data = itt.vat)
+summary(itt.vat.lm.co.)
+
+itt.vat.lm.co.pre <- lm(change.vat.itt ~ group + Pre, data = itt.vat)
+summary(itt.vat.lm.co.pre)
+
+itt.vat.lm.co.sex <- lm(change.vat.itt ~ group + sex, data = itt.vat)
+summary(itt.vat.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av endring for bruk i graf
+mean.itt.vat <- itt.vat %>%
+  summarise(mean.vat = mean(change.vat.itt, na.rm = TRUE),
+            sd.vat = sd(change.vat.itt, na.rm = TRUE)) %>%
+  print()
+
+# lager et datasett for bruk til individuelle verdier i graf (uten dropped out)
+dropout.itt.vat <- itt.vat %>%
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  drop_na() %>%
+  print()
+
+# lager graf
+figur.vat.itt <- mean.itt.vat %>%
+  ggplot(aes(group, mean.vat, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat - sd.vat, ymax = mean.vat + sd.vat), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.vat, aes(group, change.vat.itt), size = 2, alpha = 0.4) + labs(x = "", y = paste("Endring fra pre- til posttest", "i visceralt fett (g)", sep="\n")) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
+
+figur.vat.itt
+
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+
+# analyse per protocl 1 treningsøkt per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+pp.vat <- Resultatskjema %>%
+  select(id, group, time, sex, vat_mass) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = vat_mass) %>%
+  mutate(change.vat.pp = Post - Pre) %>%
+  group_by(group) %>%
+  print()
+  
+# sjekker normalfordelingen 
+ggplot(pp.vat, aes(sample = change.vat.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+pp.vat.lm <- lm(change.vat.pp ~ group, data = pp.vat)
+summary(pp.vat.lm)
+
+var.test(change.vat.pp ~ group, data = pp.vat)
+t.test(change.vat.pp ~ group, var.equal = TRUE, data = pp.vat)
+
+# cohens d
+cohensD(change.vat.pp ~ group, dat = pp.vat)
+
+# sjekker for kovariat
+pp.vat.lm.co <- lm(change.vat.pp ~ group + sex + Pre, data = pp.vat)
+summary(pp.vat.lm.co)
+
+pp.vat.lm.co.pre <- lm(change.vat.pp ~ group + Pre, data = pp.vat)
+summary(pp.vat.lm.co.pre)
+
+pp.vat.lm.co.sex <- lm(change.vat.pp ~ group + sex + Pre, data = pp.vat)
+summary(pp.vat.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.pp.vat <- pp.vat %>%
+  summarise(mean.vat.pp = mean(change.vat.pp, na.rm = TRUE),
+            sd.vat.pp = sd(change.vat.pp, na.rm = TRUE)) %>%
+  print()
+
+figur.vat.pp <- mean.pp.vat %>%
+  ggplot(aes(group, mean.vat.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.pp - sd.vat.pp, ymax = mean.vat.pp + sd.vat.pp), width = 0.1) + theme_classic() + geom_point(data = pp.vat, aes(group, change.vat.pp), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
+
+figur.vat.pp
+```
+```{r}
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
+Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+
+# analyse per protocl 2 treningsøkter per uke
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+ppm.vat <- Resultatskjema %>%
+  select(id, sex, group, time, vat_mass) %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = vat_mass) %>%
+  mutate(change.vat.ppm = Post - Pre) %>%
+  mutate(change.vat.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  drop_na() %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(ppm.vat, aes(sample = change.vat.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+# analyse av endringsscore fra pre til post mellom gruppene
+ppm.vat.lm <- lm(change.vat.ppm ~ group, data = ppm.vat)
+summary(ppm.vat.lm)
+
+# cohens d
+cohensD(change.vat.ppm ~ group, dat = ppm.vat)
+
+# sjekker for kovariat
+ppm.vat.lm.co <- lm(change.vat.ppm ~ group + sex + Pre, data = ppm.vat)
+summary(ppm.vat.lm.co)
+
+ppm.vat.lm.co.pre <- lm(change.vat.ppm ~ group + Pre, data = ppm.vat)
+summary(ppm.vat.lm.co.pre)
+
+ppm.vat.lm.co.sex <- lm(change.vat.ppm ~ group + sex + Pre, data = ppm.vat)
+summary(ppm.vat.lm.co.sex)
+
+# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
+mean.ppm.vat <- ppm.vat %>%
+  summarise(mean.vat.ppm = mean(change.vat.ppm, na.rm = TRUE),
+            sd.vat.ppm = sd(change.vat.ppm, na.rm = TRUE)) %>%
+  print()
+
+figur.vat.ppm <- mean.ppm.vat %>%
+  ggplot(aes(group, mean.vat.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.vat.ppm - sd.vat.ppm, ymax = mean.vat.ppm + sd.vat.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.vat, aes(group, change.vat.ppm), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-400, 400) + annotate("text", x=1.5, y=200, label= "*", size = 8) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
+
+figur.vat.ppm
+
+```
+
+```{r}
+library(cowplot)
+plot_grid(figur.vat.itt, figur.vat.pp, figur.vat.ppm, nrow = 1, labels = c('A', 'B', 'C'), align = "hv")
+```
+
