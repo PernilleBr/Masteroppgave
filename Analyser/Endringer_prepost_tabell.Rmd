@@ -9,9 +9,9 @@ editor_options:
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(data.table)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Gjeldene_analyser/Resultatskjema_ITT.xlsx", na = "NA")
-Analyser.pvalue <- read_excel("Gjeldene_analyser/Analyser_p.verdi.xlsx")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
+Analyser.pvalue <- read_excel("Data/Analyser_p.verdi.xlsx")
 
 
 # ordner data fra ITT

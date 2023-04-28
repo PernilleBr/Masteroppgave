@@ -9,8 +9,8 @@ editor_options:
 
 ```{r}
 #slår sammen tabeller i en for å få med og uten kjønn
-library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable)
-Resultatskjema <- read_excel("Gjeldene_analyser/Resultatskjema.xlsx", na = "NA")
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(knitr); library(equatags)
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 # uavnhengig av kjønn
 table2 <- Resultatskjema %>%
@@ -46,7 +46,7 @@ table2 <- Resultatskjema %>%
   # endrer tabellen slik at gruppene, kontroll og intervensjon, danner en rad
   # endrer navn på variablene og endrer til ønsket rekkefølge i tabellen
   mutate(variable = factor(variable, levels = c("n", "age", "height", "weight", "bmi", "fat_mass_kg", "lean_mass_kg", "sys", "dia", "vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl", "s-glukose", "pwv", "vo2max_ml_min_kg_6x5", "handgrip", "1rm_newton", "phys_act"),
-                           labels = c("n", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "Vo2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)", "Aktivitetsnivå (kcal/uke)"))) %>%
+                           labels = c("n", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)", "Aktivitetsnivå (kcal/uke)"))) %>%
   pivot_wider(names_from = group,
               values_from = ms) %>%
   select(variable, kon, fls) %>%

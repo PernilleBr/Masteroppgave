@@ -72,7 +72,7 @@ figur.tg.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -135,7 +135,7 @@ figur.tg.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
@@ -205,8 +205,8 @@ figur.tg.ppm
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat HDL
 itt.hdl <- Resultatskjema.ITT %>%
@@ -331,7 +331,7 @@ figur.hdl.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 
@@ -401,8 +401,8 @@ figur.hdl.ppm
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
-Resultatskjema.ITT <- read_excel("Resultatskjema_ITT.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse intention to treat HDL
 itt.ldl <- Resultatskjema.ITT %>%
@@ -464,7 +464,7 @@ figur.ldl.itt
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -527,7 +527,7 @@ figur.ldl.pp
 ```
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(ggsignif)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 # analyse per protocl 2 treningsøkter per uke
 

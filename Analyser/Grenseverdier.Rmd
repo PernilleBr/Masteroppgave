@@ -8,7 +8,7 @@ output: html_document
 ```{r}
 # hvor mange ligger over grenseverdiene ved pre og post test? 
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable)
-Resultatskjema <- read_excel("Resultatskjema.xlsx", na = "NA")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
 grenseverdier <- Resultatskjema %>%
   print()

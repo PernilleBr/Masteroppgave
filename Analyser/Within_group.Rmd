@@ -7,25 +7,12 @@ output: html_document
 
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(rstatix)
-Resultatskjema <- read_excel("Resultatskjema.xlsx")
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
-# ingn within-group forskjeller fra pre til post test
+# ingen within-group forskjeller fra pre til post test
 data.within <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv) %>%
-  mutate(total_mass = as.numeric(total_mass, na.rm = TRUE)) %>%
-  mutate(fat_mass = as.numeric(fat_mass, na.rm = TRUE)) %>%
-  mutate(lean_mass = as.numeric(lean_mass, na.rm = TRUE)) %>%
-  mutate(vo2max_ml_min_kg = as.numeric(vo2max_ml_min_kg_6x5, na.rm = TRUE)) %>%
-  mutate(vat_mass = as.numeric(vat_mass, na.rm = TRUE)) %>%
-  mutate(vat_volume = as.numeric(vat_volume, na.rm = TRUE)) %>%
-  mutate(`s-glukose` = as.numeric(`s-glukose`, na.rm = TRUE)) %>%
-  mutate(`s-triglyserider` = as.numeric(`s-triglyserider`, na.rm = TRUE)) %>%
-  mutate(`s-hdl` = as.numeric(`s-hdl`, na.rm = TRUE)) %>%
-  mutate(`s-ldl` = as.numeric(`s-ldl`, na.rm = TRUE)) %>%
-  mutate(pwv = as.numeric(pwv, na.rm = TRUE)) %>%
-  select(-vo2max_ml_min_kg_6x5) %>%
-  drop_na() %>%
+  select(id, group, time, sex, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, phys_act) %>%
   print()
 
 data.within.fls <- data.within %>%
@@ -40,6 +27,10 @@ summary(lm.within.mass)
 
 lm.within.mass.co <- lm(total_mass ~ time + sex, data = data.within.fls)
 summary(lm.within.mass.co)
+
+ggplot(data.within.fls, aes(sample = phys_act)) + stat_qq() + stat_qq_line(col = "red")
+lm.within.act.co <- lm(phys_act ~ time + sex, data = data.within.fls)
+summary(lm.within.act.co)
 
 ggplot(data.within.fls, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
 lm.within.bmi <- lm(bmi ~ time, data = data.within.fls)
@@ -154,6 +145,10 @@ summary(kon.lm.within.mass)
 
 kon.lm.within.mass.co <- lm(total_mass ~ time + sex, data = data.within.kon)
 summary(kon.lm.within.mass.co)
+
+ggplot(data.within.kon, aes(sample = phys_act)) + stat_qq() + stat_qq_line(col = "red")
+kon.lm.within.act <- lm(phys_act ~ time, data = data.within.kon)
+summary(kon.lm.within.act)
 
 ggplot(data.within.kon, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
 kon.lm.within.bmi <- lm(bmi ~ time, data = data.within.kon)
