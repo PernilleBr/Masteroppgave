@@ -1,11 +1,12 @@
 ```{r}
-library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
+library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom); library(lsr)
 Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
 
 # analyse per protocl 1 treningsøkt per uke
 
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
-phys_act <- Resultatskjema %>%
+itt.phys_act <- Resultatskjema.ITT %>%
   select(id, sex, group, time, phys_act) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
@@ -22,8 +23,11 @@ phys_act <- Resultatskjema %>%
 ggplot(phys_act, aes(sample = change.phys_act)) + stat_qq() + stat_qq_line(col = "red")
 
 # statistisk test for forskjeller mellom gruppene i endring i aktivitetsnivå 
-phys_act.lm <- lm(change.phys_act ~ group, data = phys_act)
+phys_act.lm <- lm(change.phys_act ~ group, data = itt.phys_act)
 summary(phys_act.lm)
+
+# cohens d
+cohensD(change.phys_act ~ group, dat = itt.phys_act)
 
 phys_act.lm.pre <- lm(Pre ~ group, data = phys_act)
 summary(phys_act.lm.pre)
@@ -31,13 +35,14 @@ summary(phys_act.lm.pre)
 phys_act.lm.post <- lm(Post ~ group, data = phys_act)
 summary(phys_act.lm.post)
 
+# prosentvis gjennomsnittlig endring
 mean.pros.phys_act <- phys_act %>%
   summarise(mean.pros.phys_act = mean(change.phys_act.pros, na.rm = TRUE),
             sd.pros.phys_act = sd(change.phys_act.pros, na.rm = TRUE)) %>%
   print()
 
-# lager et datasett med gjennomsnittsverdier av prosentvis endring for bruk i graf
-mean.phys_act <- phys_act %>%
+# gjennomsnittlig endring
+mean.phys_act <- itt.phys_act %>%
   summarise(mean.phys_act = mean(change.phys_act, na.rm = TRUE),
             sd.phys_act = sd(change.phys_act, na.rm = TRUE)) %>%
   print()
@@ -77,6 +82,9 @@ ggplot(phys_act.pp, aes(sample = change.phys_act.pp)) + stat_qq() + stat_qq_line
 
 phys_act.lm.pp <- lm(change.phys_act.pp ~ group, data = phys_act.pp)
 summary(phys_act.lm.pp)
+
+# cohens d
+cohensD(change.phys_act.pp ~ group, dat = phys_act.pp)
 
 
 phys_act.ppm <- Resultatskjema %>%
@@ -118,13 +126,16 @@ ggplot(phys_act.ppm, aes(sample = change.phys_act.ppm)) + stat_qq() + stat_qq_li
 
 phys_act.lm.ppm <- lm(change.phys_act.ppm ~ group, data = phys_act.ppm)
 summary(phys_act.lm.ppm)
+
+# cohens d
+cohensD(change.phys_act.ppm ~ group, dat = phys_act.ppm)
 ```
 
 ```{r}
-Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
 
 # regner ut endringer fra pre til post
-phys_act_change <- Resultatskjema %>%
+phys_act_change <- Resultatskjema.ITT %>%
   select(id, sex, group, time, phys_act) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
                        labels = c("Pre", "Post")),
