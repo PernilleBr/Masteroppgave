@@ -11,11 +11,11 @@ editor_options:
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 view(Resultatskjema)
-
+  
 # Undersøker eventuelle forskjeller ved pre i alle variabler t-test og lm
 pre.diff <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, age, total_mass, height, weight, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`, phys_act) %>% 
+  select(id, group, time, sex, age, total_mass, height, weight, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`, phys_act, phys_act_min) %>% 
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
   print()
@@ -41,6 +41,15 @@ summary(lm.act)
 confint(lm.act)
 
 t.test(phys_act ~ group, data = pre.diff, paired = FALSE)
+
+# aktivitetsnivå min/uke
+ggplot(pre.diff, aes(sample = phys_act_min)) + stat_qq() + stat_qq_line(col = "red")
+
+lm.actmin <- lm(phys_act_min ~ group, data = pre.diff)
+summary(lm.actmin)
+confint(lm.actmin)
+
+t.test(phys_act_min ~ group, data = pre.diff, paired = FALSE)
 
 # høyde
 ggplot(pre.diff, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
@@ -279,7 +288,7 @@ t.test(`1rm_newton` ~ group, data = pre.diff, paired = FALSE)
 # sjekker p.verdi mellom kvinner i pre-verdier for alle variabler
 pre.diff.women <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, age, height, weight, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`, phys_act) %>% 
+  select(id, group, time, sex, age, height, weight, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`, phys_act, phys_act_min) %>% 
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
   filter(sex == "1") %>%
@@ -293,6 +302,7 @@ summary(lm.age.w)
 t.test(age ~ group, data = pre.diff.women, paired = FALSE)
 
 t.test(phys_act ~ group, data = pre.diff.women, paired = FALSE)
+t.test(phys_act_min ~ group, data = pre.diff.women, paired = FALSE)
 
 ggplot(pre.diff.women, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
 lm.height.w <- lm(height ~ group, data = pre.diff.women)
@@ -386,13 +396,14 @@ summary(lm.strength_leg.w)
 # sjekker p.verdi mellom menn i pre-verdier
 pre.diff.men <- Resultatskjema %>%
   # velger relevante variabler
-  select(id, group, time, sex, age, height, weight, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`, phys_act) %>% 
+  select(id, group, time, sex, age, height, weight, total_mass, bmi, fat_mass, lean_mass, sys, dia, wc, handgrip, vo2max_ml_min_kg_6x5, vat_mass, vat_volume, `s-glukose`, `s-triglyserider`, `s-hdl`, `s-ldl`, pwv, `1rm_newton`, phys_act, phys_act_min) %>% 
   # filtrerer verdier fra pretest
   filter(time == "pre") %>%
   filter(sex == "2") %>%
   print()
 
 # t-test av alle variabler hos menn
+t.test(phys_act_min ~ group, data = pre.diff.men, paired = FALSE)
 t.test(age ~ group, data = pre.diff.men, paired = FALSE)
 t.test(height ~ group, data = pre.diff.men, paired = FALSE)
 t.test(weight ~ group, data = pre.diff.men, paired = FALSE)

@@ -87,6 +87,7 @@ pp.vat <- Resultatskjema %>%
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
   filter(id != "tr031 007") %>%
+  filter(id != "tr031 006") %>%
   # fjerner drop out
   filter(id != "tr031 10541") %>%
   filter(id != "tr031 13404") %>%

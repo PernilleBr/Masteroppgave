@@ -3,8 +3,6 @@ library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); libra
 Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
 
-# analyse per protocl 1 treningsøkt per uke
-
 # ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
 itt.phys_act <- Resultatskjema.ITT %>%
   select(id, sex, group, time, phys_act) %>%
@@ -146,6 +144,163 @@ phys_act_change <- Resultatskjema.ITT %>%
             sd = sd(phys_act, na.rm = TRUE)) %>%
   print()
 
-# 
+
+itt.phys_actmin <- Resultatskjema.ITT %>%
+  select(id, sex, group, time, phys_act_min) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  group_by(group, time) %>%
+  summarise(mean.physact = mean(phys_act_min, na.rm = TRUE),
+            sd.physact = sd(phys_act_min, na.rm = TRUE)) %>%
+  print()
+
+```
+```{r}
+# fysisk aktivitetsnivå antall minutter. 
+
+Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
+
+
+# ordner et datasett for grafisk fremstilling med individuelle endringer fra pre til post i prosent og endringsscore for bruk i statistiske tester
+itt.phys_act.min <- Resultatskjema.ITT %>%
+  select(id, sex, group, time, phys_act_min) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = phys_act_min) %>%
+  mutate(change.phys_act.min = Post - Pre) %>%
+  mutate(change.phys_act.pros.min = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+# sjekker normalfordelingen 
+ggplot(phys_act_min, aes(sample = change.phys_act.min)) + stat_qq() + stat_qq_line(col = "red")
+
+# statistisk test for forskjeller mellom gruppene i endring i aktivitetsnivå 
+phys_act.min.lm <- lm(change.phys_act.min ~ group, data = itt.phys_act.min)
+summary(phys_act.min.lm)
+
+# cohens d
+cohensD(change.phys_act.min ~ group, dat = itt.phys_act.min)
+
+phys_act.lm.pre <- lm(Pre ~ group, data = phys_act)
+summary(phys_act.lm.pre)
+
+phys_act.lm.post <- lm(Post ~ group, data = phys_act)
+summary(phys_act.lm.post)
+
+
+
+# gjennomsnittlig endring
+mean.phys_actmin <- itt.phys_act.min %>%
+  summarise(mean.phys_act.min = mean(change.phys_act.min, na.rm = TRUE),
+            sd.phys_act.min = sd(change.phys_act.min, na.rm = TRUE)) %>%
+  print()
+
+
+phys_actmin.pp <- Resultatskjema %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>%
+  filter(id != "tr031 006") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  select(id, sex, group, time, phys_act_min) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = phys_act_min) %>%
+  mutate(change.phys_actmin.pp = Post - Pre) %>%
+  mutate(change.phys_actmin.pros.pp = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+mean.phys_actmin.pp <- phys_actmin.pp %>%
+  summarise(mean.phys_actmin = mean(change.phys_actmin.pp, na.rm = TRUE),
+            sd.phys_actmin = sd(change.phys_actmin.pp, na.rm = TRUE)) %>%
+  print()
+
+ggplot(phys_actmin.pp, aes(sample = change.phys_actmin.pp)) + stat_qq() + stat_qq_line(col = "red")
+
+phys_actmin.lm.pp <- lm(change.phys_actmin.pp ~ group, data = phys_actmin.pp)
+summary(phys_actmin.lm.pp)
+
+# cohens d
+cohensD(change.phys_actmin.pp ~ group, dat = phys_actmin.pp)
+
+
+phys_actmin.ppm <- Resultatskjema %>%
+  filter(id != "tr031 012") %>% 
+  filter(id != "tr031 013") %>% 
+  filter(id != "tr031 010") %>% 
+  filter(id != "tr031 007") %>% 
+  filter(id != "tr031 002") %>% 
+  filter(id != "tr031 006") %>% 
+  filter(id != "tr031 009") %>% 
+  filter(id != "tr031 015") %>%
+  filter(id != "tr031 014") %>%
+  # fjerner drop out
+  filter(id != "tr031 10541") %>%
+  filter(id != "tr031 13404") %>%
+  filter(id != "tr031 11421") %>%
+  filter(id != "tr031 004") %>%
+  filter(id != "tr031 008") %>%
+  filter(id != "tr031 001") %>%
+  filter(id != "tr031 016") %>%
+  select(id, sex, group, time, phys_act_min) %>%
+  mutate(time = factor(time, levels = c("pre", "post"),
+                       labels = c("Pre", "Post")),
+         group = factor(group, levels = c("fls", "kon"),
+                        labels = c("Intervensjon", "Kontroll"))) %>% 
+  pivot_wider(names_from = time,
+              values_from = phys_act_min) %>%
+  mutate(change.phys_actmin.ppm = Post - Pre) %>%
+  mutate(change.phys_actmin.pros.ppm = ((Post - Pre)/ Pre) * 100) %>%
+  group_by(group) %>%
+  print()
+
+mean.phys_actmin.ppm <- phys_actmin.ppm %>%
+  summarise(mean.phys_actmin.ppm = mean(change.phys_actmin.ppm, na.rm = TRUE),
+            sd.phys_actmin.ppm = sd(change.phys_actmin.ppm, na.rm = TRUE)) %>%
+  print()
+
+ggplot(phys_actmin.ppm, aes(sample = change.phys_actmin.ppm)) + stat_qq() + stat_qq_line(col = "red")
+
+phys_actmin.lm.ppm <- lm(change.phys_actmin.ppm ~ group, data = phys_act.ppm)
+summary(phys_actmin.lm.ppm)
+
+# cohens d
+cohensD(change.phys_actmin.ppm ~ group, dat = phys_act.ppm)
+```
+
+
+
+```{r}
+#gjennomsnittlig endring pre-post fysisk aktivitet
+diff.pros.physactmin <- Resultatskjema.ITT %>%
+  select(id, group, time, sex, age, phys_act_min) %>%
+  group_by(group, time) %>%
+  pivot_wider(names_from = time,
+              values_from = phys_act_min) %>%
+  mutate(change.pros.phys = ((post - pre)/ pre) * 100) %>%
+  summarise(mean.physact = mean(change.pros.phys, na.rm = TRUE),
+            sd.phyact = sd(change.pros.phys, na.rm = TRUE)) %>%
+  print()
+
+
 ```
 

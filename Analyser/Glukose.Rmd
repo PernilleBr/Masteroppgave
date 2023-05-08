@@ -66,7 +66,7 @@ dropout.itt.gluk <- itt.gluk %>%
 
 # lager graf
 figur.gluk.itt <- mean.itt.gluk %>%
-  ggplot(aes(group, mean.gluk, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk - sd.gluk, ymax = mean.gluk + sd.gluk), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.gluk, aes(group, change.gluk.itt), size = 2, alpha = 0.4) + labs(x = "", y = paste("Endring fra pre- til posttest", "i glukose (mmol/l)", sep="\n")) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
+  ggplot(aes(group, mean.gluk, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk - sd.gluk, ymax = mean.gluk + sd.gluk), width = 0.1) + theme_classic() + geom_point(data = dropout.itt.gluk, aes(group, change.gluk.itt), size = 2, alpha = 0.4) + labs(x = "", y = paste("Endring fra pre- til posttest", "i glukose (mmol/l)", sep="\n")) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.5) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.gluk.itt
 ```
@@ -83,6 +83,7 @@ pp.gluk <- Resultatskjema %>%
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
   filter(id != "tr031 007") %>%
+  filter(id != "tr031 006") %>%
   # fjerner drop out
   filter(id != "tr031 10541") %>%
   filter(id != "tr031 13404") %>%
@@ -129,7 +130,7 @@ mean.pp.gluk <- pp.gluk %>%
   print()
 
 figur.gluk.pp <- mean.pp.gluk %>%
-  ggplot(aes(group, mean.gluk.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.pp - sd.gluk.pp, ymax = mean.gluk.pp + sd.gluk.pp), width = 0.1) + theme_classic() + geom_point(data = pp.gluk, aes(group, change.gluk.pp), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
+  ggplot(aes(group, mean.gluk.pp, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.pp - sd.gluk.pp, ymax = mean.gluk.pp + sd.gluk.pp), width = 0.1) + theme_classic() + geom_point(data = pp.gluk, aes(group, change.gluk.pp), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.5) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.gluk.pp
 ```
@@ -198,7 +199,7 @@ mean.ppm.gluk <- ppm.gluk %>%
   print()
 
 figur.gluk.ppm <- mean.ppm.gluk %>%
-  ggplot(aes(group, mean.gluk.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.ppm - sd.gluk.ppm, ymax = mean.gluk.ppm + sd.gluk.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.gluk, aes(group, change.gluk.ppm), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.1) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
+  ggplot(aes(group, mean.gluk.ppm, group = group)) + geom_boxplot(width = 0.3, fill = "white", colour = "black") + geom_errorbar(aes(ymin = mean.gluk.ppm - sd.gluk.ppm, ymax = mean.gluk.ppm + sd.gluk.ppm), width = 0.1) + theme_classic() + geom_point(data = ppm.gluk, aes(group, change.gluk.ppm), size = 2, alpha = 0.4) + labs(x = "", y = element_blank()) + geom_hline(yintercept = 0, linetype = "solid", color = "black") + theme(axis.title = element_text(size = 11), axis.text.x = element_text(size = 10), axis.text.y = element_text(size = 10)) + ylim(-3.2, 1.5) + theme(axis.text.x = element_text(angle=20, vjust = 0.5))
 
 figur.gluk.ppm
 

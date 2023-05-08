@@ -74,6 +74,8 @@ figur.wc.itt
 ```{r}
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(pbkrtest); library(broom)
 Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
+Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
+view(Resultatskjema)
 
 # analyse per protocl 1 treningsøkt per uke
 
@@ -84,6 +86,7 @@ pp.wc <- Resultatskjema %>%
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
   filter(id != "tr031 007") %>%
+  filter(id != "tr031 006") %>%
   # fjerner drop out
   filter(id != "tr031 10541") %>%
   filter(id != "tr031 13404") %>%

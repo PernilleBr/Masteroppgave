@@ -75,6 +75,7 @@ gjsnitt.pp <- Resultatskjema %>%
   filter(id != "tr031 013") %>% 
   filter(id != "tr031 010") %>% 
   filter(id != "tr031 007") %>%
+  filter(id != "tr031 006") %>%
   # fjerner drop out
   filter(id != "tr031 10541") %>%
   filter(id != "tr031 13404") %>%
@@ -193,7 +194,6 @@ table.itt <- cbind(gjsnitt.itt, itt.p) %>%
   align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
   flextable::save_as_image(path = "table_itt.png")
-  print()
 
 table.pp <- cbind(gjsnitt.pp, pp.p) %>%
   flextable() %>%
@@ -213,7 +213,6 @@ table.pp <- cbind(gjsnitt.pp, pp.p) %>%
   align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
   flextable::save_as_image(path = "table_pp.png")
-  print()
 
 table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
   flextable() %>%
@@ -233,7 +232,6 @@ table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
   align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
   autofit() %>%
   flextable::save_as_image(path = "table_ppm.png")
-  print()
 
 
 # align(align = "center", i = 1:7, j = 2:6, part = "body") %>%
