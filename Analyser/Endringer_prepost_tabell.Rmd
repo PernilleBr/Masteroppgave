@@ -16,7 +16,7 @@ Analyser.pvalue <- read_excel("Data/Analyser_p.verdi.xlsx")
 
 # ordner data fra ITT
 gjsnitt.itt <- Resultatskjema.ITT %>%
-  select(id, group, time, sex, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
+  select(id, group, time, sex, vat_mass, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
   pivot_longer(names_to = "variable",
                values_to = "value",
                cols = vat_mass:pwv) %>%
@@ -41,8 +41,8 @@ gjsnitt.itt <- Resultatskjema.ITT %>%
   select(-m.itt, -s.itt, -group, -time) %>%
   pivot_wider(names_from = group_time,
               values_from = ms.itt) %>%
-  mutate(variable = factor(variable, levels = c("vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
-                           labels = c("Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
+  mutate(variable = factor(variable, levels = c("vat_mass", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
+                           labels = c("Visceralt fett (g)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
   select(variable, fls_pre, fls_post, kon_pre, kon_post) %>%
   arrange(variable) %>%
   print()
@@ -60,7 +60,7 @@ itt.p <- Analyser.pvalue %>%
 
 # ordner data fra per protocl 1 treningsøkt per uke
 gjsnitt.pp <- Resultatskjema %>%
-  select(id, group, time, sex, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
+  select(id, group, time, sex, vat_mass, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
   pivot_longer(names_to = "variable",
                values_to = "value",
                cols = vat_mass:pwv) %>%
@@ -98,8 +98,8 @@ gjsnitt.pp <- Resultatskjema %>%
   select(-m.pp, -s.pp, -group, -time) %>%
   pivot_wider(names_from = group_time,
               values_from = ms.pp) %>%
-   mutate(variable = factor(variable, levels = c("vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
-                           labels = c("Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
+   mutate(variable = factor(variable, levels = c("vat_mass", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
+                           labels = c("Visceralt fett (g)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
   select(variable, fls_pre, fls_post, kon_pre, kon_post) %>%
   arrange(variable) %>%
   print()
@@ -117,7 +117,7 @@ pp.p <- Analyser.pvalue %>%
   print()
 
 gjsnitt.ppm <- Resultatskjema %>%
-  select(id, group, time, sex, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
+  select(id, group, time, sex, vat_mass, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
   pivot_longer(names_to = "variable",
                values_to = "value",
                cols = vat_mass:pwv) %>%
@@ -159,8 +159,8 @@ gjsnitt.ppm <- Resultatskjema %>%
   select(-m.pp, -s.pp, -group, -time) %>%
   pivot_wider(names_from = group_time,
               values_from = ms.pp) %>%
-   mutate(variable = factor(variable, levels = c("vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
-                           labels = c("Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
+   mutate(variable = factor(variable, levels = c("vat_mass", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv"),
+                           labels = c("Visceralt fett (g)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)"))) %>%
   select(variable, fls_pre, fls_post, kon_pre, kon_post) %>%
   arrange(variable) %>%
   print()
@@ -191,7 +191,7 @@ table.itt <- cbind(gjsnitt.itt, itt.p) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", j = 2:7, part = "header") %>%
-  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
+  align(align = "center", i = 1:6, j = 6:7, part = "body") %>%
   autofit() %>%
   flextable::save_as_image(path = "table_itt.png")
 
@@ -210,7 +210,7 @@ table.pp <- cbind(gjsnitt.pp, pp.p) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", j = 2:7, part = "header") %>%
-  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
+  align(align = "center", i = 1:6, j = 6:7, part = "body") %>%
   autofit() %>%
   flextable::save_as_image(path = "table_pp.png")
 
@@ -229,7 +229,7 @@ table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
   fontsize(size = 11) %>%
   fontsize(size = 11, part = "header") %>%
   align(align = "center", j = 2:7, part = "header") %>%
-  align(align = "center", i = 1:7, j = 6:7, part = "body") %>%
+  align(align = "center", i = 1:6, j = 6:7, part = "body") %>%
   autofit() %>%
   flextable::save_as_image(path = "table_ppm.png")
 
