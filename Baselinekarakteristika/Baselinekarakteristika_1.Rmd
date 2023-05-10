@@ -12,7 +12,7 @@ editor_options:
 library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); library(readxl); library(dplyr); library(flextable); library(knitr)
 Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 
-# uavnhengig av kjønn
+# datasett uavnhengig av kjønn
 table2 <- Resultatskjema %>%
   # velger relevante variabler
   select(id, group, time, sex, age, height, weight, bmi, fat_mass, lean_mass, sys, dia, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
@@ -53,7 +53,7 @@ table2 <- Resultatskjema %>%
   arrange(variable) %>%
   print()
 
-# fordelt på kjønn
+# datasett fordelt på kjønn
 table1 <- Resultatskjema %>%
   # velger relevante variabler
   select(id, group, time, sex, age, height, weight, bmi, fat_mass, lean_mass, sys, dia, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv, handgrip, vo2max_ml_min_kg_6x5, `1rm_newton`) %>%
@@ -97,31 +97,7 @@ table1 <- Resultatskjema %>%
   arrange(variable) %>%
   print()
 
-# slår sammen tabellene til en
-table.baselinechar <- inner_join(x = table2, y = table1) %>%
-  select(variable, fls, kon, fls_1, kon_1, fls_2, kon_2) %>%
-  flextable() %>%
-  set_header_labels(variable = "",
-                    fls = "Intervensjon",
-                    kon = "Kontroll",
-                    fls_1 = "Intervensjon",
-                    kon_1 = "Kontroll",
-                    fls_2 = "Intervensjon",
-                    kon_2 = "Kontroll") %>%
-  add_header_row(values = c("", "Begge kjønn", "Begge kjønn", "Kvinner", "Kvinner", "Menn", "Menn")) %>%
-  # samler gruppene i en rad
-  merge_at(part = "header", i = 1, j = 2:3) %>%
-  merge_at(part = "header", i = 1, j = 4:5) %>%
-  merge_at(part = "header", i = 1, j = 6:7) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD)", colwidths = 7) %>%
-  fontsize(size = 11) %>%
-  fontsize(size = 11, part = "header") %>%
-  align(align = "center", part = "header") %>%
-  # lar kolonnene tilpasses etter innholdet 
-  autofit() %>%
-  print()
-
-# slår sammen tabellene til en, BRUK DENNE
+# slår sammen tabellene med baselinekarakteristika uavhengig og fordelt på kjønn til én
 table.baselinechar2 <- inner_join(x = table2, y = table1) %>%
   select(variable, fls, kon, fls_1, kon_1, fls_2, kon_2) %>%
   arrange(variable) %>%
@@ -130,7 +106,7 @@ table.baselinechar2 <- inner_join(x = table2, y = table1) %>%
 # henter tabell for p-verdier 
 p.value.pre <- read_excel("Data/p.value.diff.pre.xlsx")
 
-
+# ordner datasett med p-verdier
 table.p.value.pre <- p.value.pre %>%
   mutate(variable = factor(variable, levels = c("n", "age", "height", "total_mass", "bmi", "fat_mass", "lean_mass", "sys", "dia", "vat", "wc", "triglyserider", "hdl", "ldl", "glukose", "pwv", "vo2max", "handgrip", "rm"),
                            labels = c("n", "Alder (år)", "Høyde (cm)", "Vekt (kg)", "BMI (kg/m2)", "Fettmasse (kg)", "Mager masse (kg)", "Systolisk blodtrykk (mmHg)", "Diastolisk blodtrykk (mmHg)", "Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "VO2maks (ml/min/kg)", "Gripestyrke (kg)", "Benstyrke 1RM (kg)"))) %>%
@@ -152,34 +128,8 @@ table.p.value.pre <- p.value.pre %>%
                                   (paste(format(round(p.value.m, 3))))))) %>%
   print()
 
-table.baselinechar00 <- inner_join(x = table.baselinechar2, y = table.p.value.pre) %>%
-  select(variable, fls, kon, p.value, fls_1, kon_1, p.value.w, fls_2, kon_2, p.value.m) %>%
-  flextable() %>%
-  set_header_labels(variable = "",
-                    fls = "Intervensjon",
-                    kon = "Kontroll",
-                    p.value = "P-verdi",
-                    fls_1 = "Intervensjon",
-                    kon_1 = "Kontroll",
-                    p.value.w = "P-verdi",
-                    fls_2 = "Intervensjon",
-                    kon_2 = "Kontroll",
-                    p.value.m = "P-verdi") %>%
-  add_header_row(values = c("", "Begge kjønn", "Begge kjønn", "Begge kjønn", "Kvinner", "Kvinner", "Kvinner", "Menn", "Menn", "Menn")) %>%
-  # samler gruppene i en rad
-  merge_at(part = "header", i = 1, j = 2:4) %>% 
-  merge_at(part = "header", i = 1, j = 5:7) %>%
-  merge_at(part = "header", i = 1, j = 8:10) %>%
-  add_footer_row(values = "Verdier er oppgitt som gjennomsnitt og standardavvik (SD). * P < 0.05; ¶ P < 0.1 ", colwidths = 10) %>%
-  fontsize(size = 11) %>%
-  fontsize(size = 11, part = "header") %>%
-  align(align = "center", part = "header") %>%
-  # lar kolonnene tilpasses etter innholdet 
-  autofit() %>%
-  print()
-
-# Forsøker å lage en tabell med N
-table.baselinechar001 <- #inner_join(x = table.baselinechar2, y = table.p.value.pre) %>%
+# slår sammen beaselinkarakteristika med p-verdier for tilhørende variabler, og lagrer fila som .png
+table.baselinechar001 <- 
   merge(data.frame(table.baselinechar2, row.names = NULL), data.frame(table.p.value.pre, row.names = NULL), by = 0, all = TRUE) [-1] %>%
   select(variable.x, fls, kon, p.value, fls_1, kon_1, p.value.w, fls_2, kon_2, p.value.m) %>%
   arrange(variable.x) %>%

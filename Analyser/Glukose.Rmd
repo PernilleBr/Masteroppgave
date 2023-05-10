@@ -203,6 +203,8 @@ figur.gluk.ppm <- mean.ppm.gluk %>%
 
 figur.gluk.ppm
 
+# setter sammen figurene til én
+
 library(cowplot)
 plot_grid(figur.gluk.itt, figur.gluk.pp, figur.gluk.ppm, nrow = 1, labels = c('A', 'B', 'C'), align = "hv")
 ```

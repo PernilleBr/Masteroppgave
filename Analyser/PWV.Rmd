@@ -202,6 +202,8 @@ figur.pwv.ppm <- mean.ppm.pwv %>%
 
 figur.pwv.ppm
 
+
+# setter sammen figurene til én
 library(cowplot)
 plot_grid(figur.pwv.itt, figur.pwv.pp, figur.pwv.ppm, nrow = 1, labels = c('A', 'B', 'C'), align = "hv")
 ```

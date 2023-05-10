@@ -14,7 +14,7 @@ Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
 Analyser.pvalue <- read_excel("Data/Analyser_p.verdi.xlsx")
 
 
-# ordner data fra ITT
+# ordner tabell for pre- og postverdier ved itt
 gjsnitt.itt <- Resultatskjema.ITT %>%
   select(id, group, time, sex, vat_mass, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
   pivot_longer(names_to = "variable",
@@ -47,6 +47,7 @@ gjsnitt.itt <- Resultatskjema.ITT %>%
   arrange(variable) %>%
   print()
 
+# legger til tegn på p-verdier som er signifikante eller viser tendenser til signifikant ved itt
 itt.p <- Analyser.pvalue %>%
   select(p.itt, es.itt) %>%
   drop_na() %>%
@@ -58,7 +59,7 @@ itt.p <- Analyser.pvalue %>%
   mutate(es.itt = sprintf("%.2f", round(es.itt, 2))) %>%
   print()
 
-# ordner data fra per protocl 1 treningsøkt per uke
+# ordner tabell for pre- og postverdier ved pp
 gjsnitt.pp <- Resultatskjema %>%
   select(id, group, time, sex, vat_mass, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
   pivot_longer(names_to = "variable",
@@ -104,7 +105,7 @@ gjsnitt.pp <- Resultatskjema %>%
   arrange(variable) %>%
   print()
 
-# p verdier fra pp 
+# legger til tegn på p-verdier som er signifikante eller viser tendenser til signifikant ved pp
 pp.p <- Analyser.pvalue %>%
   select(p.pp, es.pp) %>%
   drop_na() %>%
@@ -116,6 +117,7 @@ pp.p <- Analyser.pvalue %>%
   mutate(es.pp = sprintf("%.2f", round(es.pp, 2))) %>%
   print()
 
+# ordner tabell for pre- og postverdier ved ppm
 gjsnitt.ppm <- Resultatskjema %>%
   select(id, group, time, sex, vat_mass, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv) %>%
   pivot_longer(names_to = "variable",
@@ -165,6 +167,7 @@ gjsnitt.ppm <- Resultatskjema %>%
   arrange(variable) %>%
   print()
 
+# legger til tegn på p-verdier som er signifikante eller viser tendenser til signifikant ved ppm
 ppm.p <- Analyser.pvalue %>%
   select(p.ppm, es.ppm) %>%
   drop_na() %>%
@@ -176,6 +179,7 @@ ppm.p <- Analyser.pvalue %>%
   mutate(es.ppm = sprintf("%.2f", round(es.ppm, 2))) %>%
   print()
 
+# tabell for pre- og postverdier ved itt, hvor p-verider er lagt til
 table.itt <- cbind(gjsnitt.itt, itt.p) %>%
   flextable() %>%
   set_header_labels(variable = "",
@@ -195,6 +199,7 @@ table.itt <- cbind(gjsnitt.itt, itt.p) %>%
   autofit() %>%
   flextable::save_as_image(path = "table_itt.png")
 
+# tabell for pre- og postverdier ved pp, hvor p-verider er lagt til
 table.pp <- cbind(gjsnitt.pp, pp.p) %>%
   flextable() %>%
   set_header_labels(variable = "",
@@ -214,6 +219,7 @@ table.pp <- cbind(gjsnitt.pp, pp.p) %>%
   autofit() %>%
   flextable::save_as_image(path = "table_pp.png")
 
+# tabell for pre- og postverdier ved ppm, hvor p-verider er lagt til
 table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
   flextable() %>%
   set_header_labels(variable = "",
@@ -233,55 +239,6 @@ table.ppm <- cbind(gjsnitt.ppm, ppm.p) %>%
   autofit() %>%
   flextable::save_as_image(path = "table_ppm.png")
 
-
-# align(align = "center", i = 1:7, j = 2:6, part = "body") %>%
-
 ```
 
-```{r}
-# ordner data fra per protocl 1 treningsøkt per uke
-gjsnitt.pp <- Resultatskjema %>%
-  select(id, group, time, sex, vat_mass, wc, `s-triglyserider`, `s-hdl`, `s-ldl`, `s-glukose`, pwv, phys_act) %>%
-  pivot_longer(names_to = "variable",
-               values_to = "value",
-               cols = vat_mass:phys_act) %>%
-  pivot_wider(names_from = time,
-              values_from = value) %>%
-  filter(!is.na(pre),
-         !is.na(post)) %>%
-  pivot_longer(names_to = "time",
-               values_to = "value",
-               cols = pre:post) %>%
-  filter(id != "tr031 012") %>% 
-  filter(id != "tr031 013") %>% 
-  filter(id != "tr031 010") %>% 
-  filter(id != "tr031 007") %>%
-  # fjerner drop out
-  filter(id != "tr031 10541") %>%
-  filter(id != "tr031 13404") %>%
-  filter(id != "tr031 11421") %>%
-  filter(id != "tr031 004") %>%
-  filter(id != "tr031 008") %>%
-  filter(id != "tr031 001") %>%
-  filter(id != "tr031 016") %>%
-  group_by(group, time, variable) %>%
-  mutate(n = n()) %>%
-  summarise(m.pp = mean(value, na.rm = TRUE),
-         s.pp = sd(value, na.rm = TRUE)) %>%
-  mutate(ms.pp = if_else(variable == "n",
-                      as.character(m.pp),
-                        paste0(sprintf("%.2f", round(m.pp, 2)),
-                      " (",sprintf("%.2f", round(s.pp, 2)),
-                     ")")),
-         group_time = paste(group, time, sep = "_")) %>%
-  ungroup() %>%
-  select(-m.pp, -s.pp, -group, -time) %>%
-  pivot_wider(names_from = group_time,
-              values_from = ms.pp) %>%
-   mutate(variable = factor(variable, levels = c("vat_mass", "wc", "s-triglyserider", "s-hdl", "s-ldl",  "s-glukose", "pwv", "phys_act"),
-                           labels = c("Visceralt fett (g)", "Midjeomkrets (cm)", "Triglyserider (mmol/l)", "HDL-kolesterol (mmol/l)", "LDL-kolesterol (mmol/l)", "Glukose (mmol/l)", "Pulsbølgehastighet (m/s)", "Aktivitetsnivå (kcal/uke)"))) %>%
-  select(variable, fls_pre, fls_post, kon_pre, kon_post) %>%
-  arrange(variable) %>%
-  print()
-```
 

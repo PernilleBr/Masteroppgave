@@ -12,7 +12,7 @@ library(tidyverse); library(knitr); library(ggplot2); library(kableExtra); libra
 Resultatskjema <- read_excel("Data/Resultatskjema.xlsx", na = "NA")
 Resultatskjema.ITT <- read_excel("Data/Resultatskjema_ITT.xlsx", na = "NA")
 
-# analyse intention to treat TG
+# analyse intention to treat for triglyserider
 itt.tg <- Resultatskjema.ITT %>%
   select(id, group, sex, time, `s-triglyserider`) %>%
   mutate(time = factor(time, levels = c("pre", "post"),
@@ -599,21 +599,9 @@ figur.ldl.ppm
 ```
 ```{r}
 library(cowplot)
-plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, labels = c('A', '', '', 'B', '', '', 'C'))
 
-tgfig <- plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, nrow = 1, labels = c('A', 'B', 'C'))
 
-tgfig
-
-hdlfig <- plot_grid(figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, nrow = 1, labels = c('A', 'B', 'C'))
-
-hdlfig
-
-ldlfig <- plot_grid(figur.ldl.itt, figur.ldl.pp, figur.ldl.ppm, nrow = 1, labels = c('A', 'B', 'C'))
-
-ldlfig
-
-#nye separate grafer (større størrelse)
+# setter sammen figurene for hver av blodlipidene med hver av analysene (itt, pp og ppm) til én
 plot_grid(figur.tg.itt, figur.tg.pp, figur.tg.ppm, nrow = 1, labels = c('A', 'B', 'C'), align = "hv")
 
 plot_grid(figur.hdl.itt, figur.hdl.pp, figur.hdl.ppm, nrow = 1, labels = c('A', 'B', 'C'), align = "hv")

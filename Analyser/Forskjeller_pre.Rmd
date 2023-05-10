@@ -25,10 +25,8 @@ pre.diff <- Resultatskjema %>%
 ggplot(pre.diff, aes(sample = age)) + stat_qq() + stat_qq_line(col = "red")
 lm.age <- lm(age ~ group, data = pre.diff)
 summary(lm.age)
-confint(lm.age)
 
 t.test(age ~ group, data = pre.diff, paired = FALSE)
-t.test(age ~ group, data = pre.diff, var.equal = TRUE)
 
 lm.age.co <- lm(age ~ group + sex, data = pre.diff)
 summary(lm.age.co)
@@ -38,7 +36,6 @@ ggplot(pre.diff, aes(sample = phys_act)) + stat_qq() + stat_qq_line(col = "red")
 
 lm.act <- lm(phys_act ~ group, data = pre.diff)
 summary(lm.act)
-confint(lm.act)
 
 t.test(phys_act ~ group, data = pre.diff, paired = FALSE)
 
@@ -47,7 +44,6 @@ ggplot(pre.diff, aes(sample = phys_act_min)) + stat_qq() + stat_qq_line(col = "r
 
 lm.actmin <- lm(phys_act_min ~ group, data = pre.diff)
 summary(lm.actmin)
-confint(lm.actmin)
 
 t.test(phys_act_min ~ group, data = pre.diff, paired = FALSE)
 
@@ -55,8 +51,8 @@ t.test(phys_act_min ~ group, data = pre.diff, paired = FALSE)
 ggplot(pre.diff, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
 lm.height <- lm(height ~ group, data = pre.diff)
 summary(lm.height)
-confint(lm.height)
 
+# sjekker for kovariat
 lm.height.co <- lm(height ~ group + sex, data = pre.diff)
 summary(lm.height.co)
 
@@ -68,8 +64,8 @@ t.test(weight ~ group, data = pre.diff, paired = FALSE)
 ggplot(pre.diff, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
 lm.mass <- lm(total_mass ~ group, data = pre.diff)
 summary(lm.mass)
-confint(lm.mass)
 
+# kovariat
 lm.mass.co <- lm(total_mass ~ group + sex, data = pre.diff)
 summary(lm.mass.co)
 
@@ -80,11 +76,8 @@ t.test(total_mass ~ group, data = pre.diff, paired = FALSE)
 ggplot(pre.diff, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
 lm.bmi <- lm(bmi ~ group, data = pre.diff)
 summary(lm.bmi)
-confint(lm.bmi)
-var.test(bmi ~ group, data = pre.diff)
-t.test(bmi ~ group, var.equal = TRUE, data = pre.diff)
-t.test(bmi ~ group, data = pre.diff)
 
+# kovariat
 lm.bmi.co <- lm(bmi ~ group + sex, data = pre.diff)
 summary(lm.bmi.co)
 
@@ -95,8 +88,8 @@ t.test(bmi ~ group, data = pre.diff, paired = FALSE)
 ggplot(pre.diff, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
 lm.fat <- lm(fat_mass ~ group, data = pre.diff)
 summary(lm.fat)
-confint(lm.fat)
 
+# kovariat
 lm.fat.co <- lm(fat_mass ~ group + sex, data = pre.diff)
 summary(lm.fat.co)
 
@@ -106,10 +99,10 @@ t.test(fat_mass ~ group, data = pre.diff, paired = FALSE)
 ggplot(pre.diff, aes(sample = lean_mass)) + stat_qq() + stat_qq_line(col = "red")
 lm.lean <- lm(lean_mass ~ group, data = pre.diff)
 summary(lm.lean)
-confint(lm.lean)
 
 t.test(lean_mass ~ group, data = pre.diff, paired = FALSE)
 
+# kovariat
 lm.lean.co <- lm(lean_mass ~ group + sex, data = pre.diff)
 summary(lm.lean.co)
 
@@ -117,8 +110,8 @@ summary(lm.lean.co)
 ggplot(pre.diff, aes(sample = sys)) + stat_qq() + stat_qq_line(col = "red")
 lm.sys <- lm(sys ~ group, data = pre.diff)
 summary(lm.sys)
-confint(lm.sys)
 
+# kovariat
 lm.sys.co <- lm(sys ~ group + sex, data = pre.diff)
 summary(lm.sys.co)
 
@@ -128,8 +121,8 @@ t.test(sys ~ group, data = pre.diff, paired = FALSE)
 ggplot(pre.diff, aes(sample = dia)) + stat_qq() + stat_qq_line(col = "red")
 lm.dia <- lm(dia ~ group, data = pre.diff)
 summary(lm.dia)
-confint(lm.dia)
 
+# kovariat
 lm.dia.co <- lm(dia ~ group + sex, data = pre.diff)
 summary(lm.dia.co)
 
@@ -139,12 +132,12 @@ t.test(dia ~ group, data = pre.diff, paired = FALSE)
 ggplot(pre.diff, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
 lm.wc <- lm(wc ~ group, data = pre.diff)
 summary(lm.wc)
-confint(lm.wc)
 
-# wc signifikant foskjellig
+# sjekker kovariat
 lm.wc.co <- lm(wc ~ group + sex, data = pre.diff)
 summary(lm.wc.co)
 
+# wc signifikant foskjellig
 t.test(wc ~ group, data = pre.diff, paired = FALSE)
 
 # handgrip
@@ -152,6 +145,7 @@ ggplot(pre.diff, aes(sample = handgrip)) + stat_qq() + stat_qq_line(col = "red")
 lm.hg <- lm(handgrip ~ group, data = pre.diff)
 summary(lm.hg)
 
+# kovariat
 lm.hg.co <- lm(handgrip ~ group + sex, data = pre.diff)
 summary(lm.hg.co)
 
@@ -164,6 +158,7 @@ summary(lm.vo2)
 
 t.test(vo2max_ml_min_kg_6x5 ~ group, data = pre.diff, paired = FALSE)
 
+# kovariat
 lm.vo2.co <- lm(vo2max_ml_min_kg ~ group + sex, data = pre.diff)
 summary(lm.vo2.co)
 
@@ -174,6 +169,7 @@ summary(lm.vat)
 
 t.test(vat_mass ~ group, data = pre.diff, paired = FALSE)
 
+# kovariat
 lm.vat.co <- lm(vat_mass ~ group + sex, data = pre.diff)
 summary(lm.vat.co)
 
@@ -182,46 +178,26 @@ lm.vatv <- lm(vat_volume ~ group, data = pre.diff)
 summary(lm.vatv)
 
 # glukose
-# fjerner fp som hadde 10 i glukose 
-gluk <- pre.diff %>%
-  filter(id != "tr031 10541") %>%
-  print()
-
-# sjekker forskjeller både med og uten fp med ekstremverdi  
-ggplot(gluk, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
-lm.gluk <- lm(`s-glukose` ~ group, data = gluk)
-summary(lm.gluk)
-
-t.test(`s-glukose` ~ group, data = pre.diff, paired = FALSE)
-
 ggplot(pre.diff, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
 lm.gluk.med <- lm(`s-glukose` ~ group, data = pre.diff)
 summary(lm.gluk.med)
 
+# kovariat
 lm.gluk.med.co <- lm(`s-glukose` ~ group + sex, data = pre.diff)
 summary(lm.gluk.med.co)
+
+t.test(`s-glukose` ~ group, data = pre.diff, paired = FALSE)
 
 # trilgryserider
 ggplot(pre.diff, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
 lm.trigl <- lm(`s-triglyserider` ~ group, data = pre.diff)
 summary(lm.trigl)
 
+# kovariat
 lm.trigl.co <- lm(`s-triglyserider` ~ group + sex, data = pre.diff)
 summary(lm.trigl.co)
 
 t.test(`s-triglyserider` ~ group, data = pre.diff, paired = FALSE)
-
-# fjerner 3xfp med ekstreme verdier i triglyserider
-trigl <- pre.diff %>%
-  filter(id != "tr031 11159") %>%
-  filter(id != "tr031 14662") %>%
-  filter(id != "tr031 11887") %>%
-  print()
-
-# sjekker forskjeller uten 3xfp
-ggplot(trigl, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
-lm.trigl.uten <- lm(`s-triglyserider` ~ group, data = trigl)
-summary(lm.trigl.uten)
 
 # hdl
 ggplot(pre.diff, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
@@ -233,43 +209,23 @@ t.test(`s-hdl` ~ group, data = pre.diff, paired = FALSE)
 lm.hdl.co <- lm(`s-hdl` ~ group + sex, data = pre.diff)
 summary(lm.hdl.co)
 
-# fjerner fp med ekstreme verdier i hdl
-hdl <- pre.diff %>%
-  filter(id != "tr031 005") %>%
-  print()
-
-ggplot(hdl, aes(sample = `s-hdl`)) + stat_qq() + stat_qq_line(col = "red")
-lm.hdl.uten <- lm(`s-hdl` ~ group, data = hdl)
-summary(lm.hdl.uten)
-
 # ldl
 ggplot(pre.diff, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
 lm.ldl <- lm(`s-ldl` ~ group, data = pre.diff)
 summary(lm.ldl)
 
-ggplot(pre.diff, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
+# kovariat
 lm.ldl.co <- lm(`s-ldl` ~ group + sex, data = pre.diff)
 summary(lm.ldl.co)
 
-# fjerner fp med ekstreme verdier i ldl
-ldl <- pre.diff %>%
-  filter(id != "tr031 001") %>%
-  filter(id != "tr031 10541") %>%
-  filter(id != "tr031 015") %>%
-  print()
-
 t.test(`s-ldl` ~ group, data = pre.diff, paired = FALSE)
-
-ggplot(ldl, aes(sample = `s-ldl`)) + stat_qq() + stat_qq_line(col = "red")
-lm.ldl.uten <- lm(`s-ldl` ~ group, data = ldl)
-summary(lm.ldl.uten)
 
 # pwv
 ggplot(pre.diff, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
 lm.pwv <- lm(pwv ~ group, data = pre.diff)
 summary(lm.pwv)
 
-ggplot(pre.diff, aes(sample = pwv)) + stat_qq() + stat_qq_line(col = "red")
+# kovariat
 lm.pwv.co <- lm(pwv ~ group + sex, data = pre.diff)
 summary(lm.pwv.co)
 
@@ -280,6 +236,7 @@ ggplot(pre.diff, aes(sample = strength_leg)) + stat_qq() + stat_qq_line(col = "r
 lm.strength_leg <- lm(strength_leg ~ group, data = pre.diff)
 summary(lm.strength_leg)
 
+# kovariat
 lm.strength_leg.co <- lm(strength_leg ~ group + sex, data = pre.diff)
 summary(lm.strength_leg.co)
 
@@ -295,28 +252,8 @@ pre.diff.women <- Resultatskjema %>%
   # grupperer etter gruppe 
   print()
 
-ggplot(pre.diff.women, aes(sample = age)) + stat_qq() + stat_qq_line(col = "red")
-lm.age.w <- lm(age ~ group, data = pre.diff.women)
-summary(lm.age.w)
-
-t.test(age ~ group, data = pre.diff.women, paired = FALSE)
-
-t.test(phys_act ~ group, data = pre.diff.women, paired = FALSE)
-t.test(phys_act_min ~ group, data = pre.diff.women, paired = FALSE)
-
-ggplot(pre.diff.women, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
-lm.height.w <- lm(height ~ group, data = pre.diff.women)
-summary(lm.height.w)
-
-ggplot(pre.diff.women, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
-lm.mass.w <- lm(total_mass ~ group, data = pre.diff.women)
-summary(lm.mass.w)
-
-ggplot(pre.diff.women, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
-lm.bmi.w <- lm(bmi ~ group, data = pre.diff.women)
-summary(lm.bmi.w)
-
 # t-test kvinner for alle variabler
+t.test(age ~ group, data = pre.diff.women, paired = FALSE)
 t.test(height ~ group, data = pre.diff.women, paired = FALSE)
 t.test(weight ~ group, data = pre.diff.women, paired = FALSE)
 t.test(bmi ~ group, data = pre.diff.women, paired = FALSE)
@@ -334,8 +271,19 @@ t.test(`s-hdl` ~ group, data = pre.diff.women, paired = FALSE)
 t.test(`s-ldl` ~ group, data = pre.diff.women, paired = FALSE)
 t.test(pwv ~ group, data = pre.diff.women, paired = FALSE)
 t.test(`1rm_newton` ~ group, data = pre.diff.women, paired = FALSE)
+t.test(phys_act ~ group, data = pre.diff.women, paired = FALSE)
+t.test(phys_act_min ~ group, data = pre.diff.women, paired = FALSE)
 
 # sjekk av normalfordeling
+ggplot(pre.diff.women, aes(sample = age)) + stat_qq() + stat_qq_line(col = "red")
+lm.age.w <- lm(age ~ group, data = pre.diff.women)
+summary(lm.age.w)
+
+ggplot(pre.diff.women, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red")
+
+ggplot(pre.diff.women, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
+
+ggplot(pre.diff.women, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
 ggplot(pre.diff.women, aes(sample = fat_mass)) + stat_qq() + stat_qq_line(col = "red")
 lm.fat.w <- lm(fat_mass ~ group, data = pre.diff.women)
 summary(lm.fat.w)
@@ -433,17 +381,9 @@ ggplot(pre.diff.men, aes(sample = height)) + stat_qq() + stat_qq_line(col = "red
 lm.height.m <- lm(height ~ group, data = pre.diff.men)
 summary(lm.height.m)
 
-# filtrerer ut ekstremverdi
-pre.diff.men.eks <- pre.diff.men %>%
-  filter(id != "tr031 004")
-
 ggplot(pre.diff.men, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
 lm.mass.m <- lm(total_mass ~ group, data = pre.diff.men)
 summary(lm.mass.m)
-
-ggplot(pre.diff.men.eks, aes(sample = total_mass)) + stat_qq() + stat_qq_line(col = "red")
-lm.mass.m2 <- lm(total_mass ~ group, data = pre.diff.men.eks)
-summary(lm.mass.m2)
 
 ggplot(pre.diff.men, aes(sample = bmi)) + stat_qq() + stat_qq_line(col = "red")
 lm.bmi.m <- lm(bmi ~ group, data = pre.diff.men)
@@ -477,12 +417,6 @@ ggplot(pre.diff.men, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
 lm.wc.m <- lm(wc ~ group, data = pre.diff.men)
 summary(lm.wc.m)
 
-# sjekker uten ekstremverdi
-
-ggplot(pre.diff.men.eks, aes(sample = wc)) + stat_qq() + stat_qq_line(col = "red")
-lm.wc.m2 <- lm(wc ~ group, data = pre.diff.men.eks)
-summary(lm.wc.m2)
-
 ggplot(pre.diff.men, aes(sample = handgrip)) + stat_qq() + stat_qq_line(col = "red")
 lm.hg.m <- lm(handgrip ~ group, data = pre.diff.men)
 summary(lm.hg.m)
@@ -498,14 +432,6 @@ summary(lm.vat.m)
 ggplot(pre.diff.men, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
 lm.gluk.m <- lm(`s-glukose` ~ group, data = pre.diff.men)
 summary(lm.gluk.m)
-
-# sjekker uten ekstremverdi
-pre.diff.men.eks2 <- pre.diff.men %>%
-  filter(id != "tr031 009")
-
-ggplot(pre.diff.men.eks2, aes(sample = `s-glukose`)) + stat_qq() + stat_qq_line(col = "red")
-lm.gluk.m2 <- lm(`s-glukose` ~ group, data = pre.diff.men.eks2)
-summary(lm.gluk.m2)
 
 ggplot(pre.diff.men, aes(sample = `s-triglyserider`)) + stat_qq() + stat_qq_line(col = "red")
 lm.trigl.m <- lm(`s-triglyserider` ~ group, data = pre.diff.men)
