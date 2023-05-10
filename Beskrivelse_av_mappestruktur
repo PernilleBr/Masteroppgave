@@ -1,0 +1,54 @@
+*Beskrivelse av mappestruktur
+
+**Mappen "Analyser"
+Mappen "Analyser"" inneholder analyser av hovedvariablene (visceralt fett, blodlipider, blodglukose og arteriell stivhet). I alle disse analysene analyseres intention-to-treat først (ITT), etterfulgt av per-protocol 1 (pp) og per-protocol 2 (ppm). ITT inkluderer alle deltakerne som har gjennomført pre-tester, mens pp ekskluderer fem av deltakerne (tr031 006, 007, 010, 012 og 013) og ppm ekskluderer ytterligere fire deltakere (tr031 002, 009, 014 og 015). I disse filene ligger også figurene (i kodet tekst). 
+Filene "Phys_act" og "WC" i mappen "Analyser" har ikke blitt benyttet i masteroppgaven, men har blitt undersøkt. 
+"Forskjeller_pre" som ligger i mappen "Analyser" inneholder statistiske tester (lineær regresjon (lm) og t-test (som er benyttet i oppgaven)) for alle deltakerne på alle variabler ved baseline uavhengig av kjønn, samt adskilt etter kjønn. 
+Mappen "Analyser" inneholder også fila "Endringer_prepost_tabell" som ordner datasett ved de tre ulike analysene (itt, pp og ppm) i tabeller sammen med tilhørende p-verdier. 
+Fila "Witihn_group" inneholder skript for å undersøke eventuelle forskjeller innad i gruppene fra pre- til posttest. 
+
+**Mappen "Baselinekarakteristika"
+Mappen "Baselinekarakteristika" inneholder kun en fil "Baselinekarakteristika_1" som inneholder skript som lager en tabell med p-verdier for baselinekarakteristika uavhengig av kjønn og fordelt på kjønn. 
+
+**Mappen "Data"
+Mappen "Data" inneholder fire excel-filer: opprinnelig resultatskjema, resultatskjema som er for itt-analysene, fil med p-verdier for forskjeller mellom gruppene ved baseline ("p.value-diff.pre"), fil med p-verdier for endringer mellom gruppene fra pre- til posttest av hovedvariablene ("Analyser_p.verdi") og en fil med p-verdier for endringer fra pre- til posttest innad i gruppene ("p.value.prepost.within")
+
+***Beskivelse av forkortelser brukt i excel-filene: 
+gruop: intervensjonsgruppe (fls) eller kontrollgruppe (kon)
+id: id-nummer
+time: pre- eller posttest
+sex: 1 = kvinne, 2 = mann
+age: spesifikk alder
+bmi: tall fra DEXA
+sys_1, dia_1, sys_2, dia_2: det ble gjennomført to blodtrykksmålinger, blodtrykksmåling 1 refererer til sys_1 eller dia_1
+sys, dia: gjennomsnittet av sys_1 og sys_2, og dia_1 og dia_2
+height: høyde
+weight: vekt
+wc_1, wc_2: det ble gjennomført minimum 2 målinger av midjemål
+wc: gjennomsnittet av wc_1 og wc_2
+hangrip: gripestyrke målt i kg
+vo2max_ml_min_6x5: absolutt oksygenopptak målt ved test på tredemølle, fem sekunders målinger
+vo2max_ml_min__kg_6x5: oksygenopptak relativt til kroppsvekt målt ved test på tredemølle, fem sekunders målinger
+total_mass: total masse i gram fra DEXA
+lean_mass: mager masse i gram fra DEXA
+fat_mass: fettmasse i gram fra DEXA
+vat_mass_1, vat_mass_2: visceralt fett i gram fra DEXA, første og andre måling (ref. metodebeskrivelse om oppmåling av det androide området)
+vat_mass: snitt av vat_mass_1 og vat_mass_2, målt i gram
+s-glukose, s-triglyserider, s-hdl, s-ldl: verdier fra blodprøve (mmol/l)
+pwv: pulsbølgehastighet målt i m/s
+1rm_newton: maksimal benstyrke målt i newton - direkte overført til kg, ved test i benpress
+phys_act: fysisk aktivitetsnivå oppgitt i kcal/uke målt ved spørreskjema
+phys_act_min: fysisk aktivitetsnivå oppgitt i min/uke målt ved spørreskjema
+p.value: p-verdi for både menn og kvinner
+p.value.w: p-verdi for kvinner
+p.value.m: p-verdi for menn
+itt: intention-to-treat
+p.itt, p.pp, p.ppm: p-verdi for itt-analyser, per-protocol 1 analyser og per-protocol 2 analyser
+vat.itt.p, tg.itt.p, hdl.itt.p, ldl.itt.p, gluk.itt.p, pwv.itt.p: p-verdi for visceralt fett, triglyserider, hdl- og ldl-kolesterol, glukose og pulsbølgehastighet ved itt-analyser (og det samme for "variabel".pp.p og "variabel".ppm.p bare at det gjelder for analyser for per-protocol 1 og per-protocol 2)
+es.itt, es.pp, es.ppm: effektstørrelse for de ulike variablene ved de ulike analysene 
+ 
+**Mappen "Figurer"
+Denne mappen inneholder png-filer for grafer som er brukt i masteroppgaven tilhørende alle hovedvariablene: visceralt fett (vat), ldl-kolesterol, hdl-kolesterol, triglyserider (tg), pulsbølgehastighet (pwv) og glukose (gluk). 
+
+**Mappen "Tabeller"
+Denne mappen inneholder png-filer for tabeller som er brukt i masteroppgaven, fra analsyer av itt, pp og ppm. 
