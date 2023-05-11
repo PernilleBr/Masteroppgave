@@ -11,7 +11,7 @@ Fila "Witihn_group" inneholder skript for å undersøke eventuelle forskjeller i
 Mappen "Baselinekarakteristika" inneholder kun en fil "Baselinekarakteristika_1" som inneholder skript som lager en tabell med p-verdier for baselinekarakteristika uavhengig av kjønn og fordelt på kjønn. 
 
 **Mappen "Data"
-Mappen "Data" inneholder fire excel-filer: opprinnelig resultatskjema, resultatskjema som er for itt-analysene, fil med p-verdier for forskjeller mellom gruppene ved baseline ("p.value-diff.pre"), fil med p-verdier for endringer mellom gruppene fra pre- til posttest av hovedvariablene ("Analyser_p.verdi") og en fil med p-verdier for endringer fra pre- til posttest innad i gruppene ("p.value.prepost.within")
+Mappen "Data" inneholder fire excel-filer: opprinnelig resultatskjema ("Resultatskjema"), resultatskjema som er for itt-analysene ("Resultatskjema_ITT""), treningsmengde per deltaker fra intervensjonsgruppen (frisklivssentralen) ("Treningsmengde_fls"), fil med p-verdier for forskjeller mellom gruppene ved baseline ("p.value-diff.pre"), fil med p-verdier for endringer mellom gruppene fra pre- til posttest av hovedvariablene ("Analyser_p.verdi") og en fil med p-verdier for endringer fra pre- til posttest innad i gruppene ("p.value.prepost.within")
 
 ***Beskivelse av forkortelser brukt i excel-filene: 
 gruop: intervensjonsgruppe (fls) eller kontrollgruppe (kon)
@@ -46,6 +46,13 @@ itt: intention-to-treat
 p.itt, p.pp, p.ppm: p-verdi for itt-analyser, per-protocol 1 analyser og per-protocol 2 analyser
 vat.itt.p, tg.itt.p, hdl.itt.p, ldl.itt.p, gluk.itt.p, pwv.itt.p: p-verdi for visceralt fett, triglyserider, hdl- og ldl-kolesterol, glukose og pulsbølgehastighet ved itt-analyser (og det samme for "variabel".pp.p og "variabel".ppm.p bare at det gjelder for analyser for per-protocol 1 og per-protocol 2)
 es.itt, es.pp, es.ppm: effektstørrelse for de ulike variablene ved de ulike analysene 
+itt: intention-to-treat
+pp: per-protocol 1
+ppm: per-protocol 2
+itt, pp, ppm: 0 = tilfredstiller ikke krav, 1 = tilfredsstiller krav
+ex_min: totalt antall minutter med trening for hele intervensjonsperioden
+int_week: antall uker mellom pre- og posttest 
+mean_ex_min_week: gjennomsnittlig treningsmengde (minutter per uke)
  
 **Mappen "Figurer"
 Denne mappen inneholder png-filer for grafer som er brukt i masteroppgaven tilhørende alle hovedvariablene: visceralt fett (vat), ldl-kolesterol, hdl-kolesterol, triglyserider (tg), pulsbølgehastighet (pwv) og glukose (gluk). 
